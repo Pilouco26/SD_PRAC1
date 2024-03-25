@@ -1,6 +1,6 @@
 from xmlrpc.server import SimpleXMLRPCServer
 import logging
-from insulting_service import insulting_service
+from auxiliars.insulting_service import insulting_service
 
 logging.basicConfig(level=logging.INFO)
 

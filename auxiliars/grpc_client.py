@@ -25,6 +25,8 @@ empty = insultingServer_pb2.google_dot_protobuf_dot_empty__pb2.Empty()
 response = stub.GetInsults(empty)
 print(response.value)
 
+response = stub.get
+
 # create a valid request message
 empty = insultingServer_pb2.google_dot_protobuf_dot_empty__pb2.Empty()
 response = stub.InsultMe(empty)

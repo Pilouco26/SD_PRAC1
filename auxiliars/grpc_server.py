@@ -14,6 +14,8 @@ from insulting_service import insulting_service
 # insultingServer_pb2_grpc.InsultingServiceServicer
 class InsultingServiceServicer(insultingServer_pb2_grpc.InsultingServiceServicer):
 
+    insult_counts = {}
+
     def AddInsult(self, insult, context):
         insulting_service.add_insult(insult.value)
         response = insultingServer_pb2.google_dot_protobuf_dot_empty__pb2.Empty()
@@ -31,9 +33,16 @@ class InsultingServiceServicer(insultingServer_pb2_grpc.InsultingServiceServicer
         response.value = insult
         return response
 
-    def get_shout_insults(self, empty, context):
+    def increment_insult_count(self, insult):
+        if insult in self.insult_counts:
+            self.insult_counts[insult] += 1
+        else:
+            self.insult_counts[insult] = 1
 
-        return 0
+    def get_top_insults(self):
+        # Sort the insults by count in descending order
+        sorted_insults = sorted(self.insult_counts.items(), key=lambda x: x[1], reverse=True)
+        return sorted_insults
 
 
 # create a gRPC server
