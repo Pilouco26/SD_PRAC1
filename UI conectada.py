@@ -3,6 +3,7 @@ import sys
 import tkinter as tk
 from tkinter import simpledialog
 
+import pika
 import redis
 
 
@@ -40,7 +41,8 @@ class ChatUI(tk.Tk):
             "Subscribe to group chat": self.subscribe_to_group_chat,
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
-            "test nameserver": self.get_ip_nameserver
+            "test nameserver": self.get_ip_nameserver,
+            "test group": self.send_message_group
         }
 
         for option in self.options:
@@ -56,15 +58,16 @@ class ChatUI(tk.Tk):
         chat_id = simpledialog.askstring("get ip", "Enter chat ID:")
         if chat_id:
             if chat_id:
-                #send petition
+                # send petition
                 data = chat_id + ':' + self.client.ip_address + ':' + str(self.client.port)
                 self.client.redis.lpush(self.client.message_queue_key, data)
                 print("Petition sent successfully.")
 
-                #retrieve ip
+                # retrieve ip
                 channel = self.client.pubsub_channel_prefix + self.client.ip_address
                 pubsub = self.client.redis.pubsub()
                 pubsub.subscribe([channel])
+                print("asass")
                 for message in pubsub.listen():
                     if message['type'] == 'message':
                         # Change this line
@@ -73,6 +76,16 @@ class ChatUI(tk.Tk):
                         print("Received IP:", ip_address, "Port:", port)
                         # You can now establish a connection using this IP address and port
                         break  # Stop listening after receiving the first message
+
+    def send_message_group(self):
+        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        channel = connection.channel()
+        message = simpledialog.askstring("Send Message", "message here bitch")
+        if message:
+            # Declare the exchange
+            channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
+            # Publish the message to the exchange with the routing key 'chatID'
+            channel.basic_publish(exchange='chat_exchange', routing_key='chatID', body=message)
 
 
     def subscribe_to_group_chat(self):

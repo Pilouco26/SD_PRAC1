@@ -1,9 +1,17 @@
 import redis
-
+import pika
 redis_host = "localhost"
 redis_port = 6379
 redis_password = ""
 
+
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters(host='localhost'))
+channel = connection.channel()
+
+channel.queue_declare(queue='chatID')
+
+channel.basic_publish(exchange='', routing_key='hello', body='Hello World2!')
 
 class NameServer:
     def __init__(self):
@@ -18,7 +26,10 @@ class NameServer:
     def get_connection_params(self, username):
         ip_address = self.redis.hget('chat:{}'.format(username), 'ip')
         port = self.redis.hget('chat:{}'.format(username), 'port')
-        return ip_address, port
+        if ip_address and port:
+            return ip_address, port
+        else:
+            return None, None
 
     def push_petition(self, petition):
         self.redis.lpush(self.message_queue_key, petition)
@@ -41,12 +52,14 @@ class NameServer:
                     username, ip_address, port = parts
                     if username:
                         info = self.get_connection_params(username)
-                        if info:
+                        channel2 = self.pubsub_channel_prefix + ip_address
+                        if info is not None: #falta corregir None, None.
                             # Publish the information to a channel associated with the sender's IP
-                            channel = self.pubsub_channel_prefix + ip_address
-                            self.redis.publish(channel, ":".join(info))
+
+                            self.redis.publish(channel2, ":".join(info))
                             print('Published')
                         else:
+                            self.redis.publish(channel2, "error")
                             print("No info found for username:", username)
                     else:
                         print("Invalid petition format:", petition)

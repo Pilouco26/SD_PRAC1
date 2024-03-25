@@ -5,23 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a40070f9-26cf-4ee3-a925-0290b922b2a0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/UI conectada.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auxiliars/helloRMQ.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auxiliars/reciveRMQ.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nameServer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redisServer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auxiliars/helloRMQ_exchanges.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grpc_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/grpc_client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/grpc_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insultingServer.proto" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/insultingServer.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insultingServer_pb2.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/insultingServer_pb2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insultingServer_pb2.pyi" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/insultingServer_pb2.pyi" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insultingServer_pb2_grpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/insultingServer_pb2_grpc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insulting_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/insulting_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlrpc_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/xmlrpc_client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xmlrpc_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/xmlrpc_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI conectada.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI conectada.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auxiliars/reciveRMQ.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/reciveRMQ.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nameServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/nameServer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +45,7 @@
   "keyToString": {
     "Python.UI conectada.executor": "Run",
     "Python.clientServer.executor": "Run",
+    "Python.helloRMQ2.executor": "Run",
     "Python.main.executor": "Run",
     "Python.nameServer.executor": "Run",
     "Python.reciveRMQ.executor": "Run",
@@ -65,6 +54,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/migue/PycharmProjects/sdpract/auxiliars",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -75,6 +65,9 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\migue\PycharmProjects\sdpract\auxiliars" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\migue\PycharmProjects\sdpract\auxiliars" />
       <recent name="C:\Users\migue\PycharmProjects\sdpract\aux " />
@@ -105,7 +98,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="clientServer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="helloRMQ_exchanges" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="sdpract" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -114,12 +107,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/auxiliars" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/clientServer.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\migue\PycharmProjects\sdpract\auxiliars\helloRMQ_exchanges.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -223,10 +216,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.UI conectada" />
-        <item itemvalue="Python.redisServer" />
         <item itemvalue="Python.nameServer" />
-        <item itemvalue="Python.clientServer" />
+        <item itemvalue="Python.helloRMQ_exchanges" />
         <item itemvalue="Python.reciveRMQ" />
+        <item itemvalue="Python.redisServer" />
       </list>
     </recent_temporary>
   </component>
@@ -253,7 +246,9 @@
       <workItem from="1710781894760" duration="325000" />
       <workItem from="1710783150534" duration="924000" />
       <workItem from="1711106362914" duration="2684000" />
-      <workItem from="1711365021327" duration="8926000" />
+      <workItem from="1711365021327" duration="9412000" />
+      <workItem from="1711381242886" duration="424000" />
+      <workItem from="1711381677819" duration="2398000" />
     </task>
     <servers />
   </component>
@@ -280,24 +275,20 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/auxiliars/reciveRMQ.py</url>
-          <line>17</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/UI conectada.py</url>
-          <line>116</line>
-          <option name="timeStamp" value="6" />
+          <line>129</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/sdpract$clientServer.coverage" NAME="clientServer Coverage Results" MODIFIED="1711365541842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$nameServer.coverage" NAME="nameServer Coverage Results" MODIFIED="1711371516368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$UI_conectada.coverage" NAME="UI conectada Coverage Results" MODIFIED="1711374761698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sdpract$nameServer.coverage" NAME="nameServer Coverage Results" MODIFIED="1711383801327" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sdpract$UI_conectada.coverage" NAME="UI conectada Coverage Results" MODIFIED="1711384041573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$main.coverage" NAME="main Coverage Results" MODIFIED="1710783771405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$redisServer.coverage" NAME="redisServer Coverage Results" MODIFIED="1711371560608" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$reciveRMQ.coverage" NAME="reciveRMQ Coverage Results" MODIFIED="1711107439392" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
+    <SUITE FILE_PATH="coverage/sdpract$reciveRMQ.coverage" NAME="reciveRMQ Coverage Results" MODIFIED="1711382943436" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
+    <SUITE FILE_PATH="coverage/sdpract$helloRMQ2.coverage" NAME="helloRMQ2 Coverage Results" MODIFIED="1711382953026" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
   </component>
 </project>
