@@ -1,9 +1,9 @@
 import redis
 import pika
+
 redis_host = "localhost"
 redis_port = 6379
 redis_password = ""
-
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))
@@ -12,6 +12,7 @@ channel = connection.channel()
 channel.queue_declare(queue='chatID')
 
 channel.basic_publish(exchange='', routing_key='hello', body='Hello World2!')
+
 
 class NameServer:
     def __init__(self):
@@ -52,10 +53,10 @@ class NameServer:
                     username, ip_address, port = parts
                     if username:
                         info = self.get_connection_params(username)
+                        ip, port = info
                         channel2 = self.pubsub_channel_prefix + ip_address
-                        if info is not None: #falta corregir None, None.
+                        if ip is not None:
                             # Publish the information to a channel associated with the sender's IP
-
                             self.redis.publish(channel2, ":".join(info))
                             print('Published')
                         else:

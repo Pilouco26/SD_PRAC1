@@ -6,6 +6,8 @@ from tkinter import simpledialog
 import pika
 import redis
 
+from bigChat import ChatConsumer
+
 
 class Client:
     def __init__(self, username, ip_address, port):
@@ -16,6 +18,7 @@ class Client:
         self.message_queue_key = 'petitions'
         self.message_queue_key = 'petitions'
         self.pubsub_channel_prefix = 'petition_channel:'
+        self.chatConsumer = ChatConsumer()
 
     def register(self, petition_data):
         if isinstance(petition_data, Client):
@@ -41,13 +44,35 @@ class ChatUI(tk.Tk):
             "Subscribe to group chat": self.subscribe_to_group_chat,
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
-            "test nameserver": self.get_ip_nameserver,
-            "test group": self.send_message_group
+            "Test nameserver": self.get_ip_nameserver,
+            "Test group": self.send_message_group,
+            "Display Chat": self.display_chat
         }
 
         for option in self.options:
             button = tk.Button(self, text=option, command=self.options[option])
             button.pack()
+
+    def display_chat(self):
+        chat_window = tk.Toplevel(self)
+        chat_window.title("Chat Display")
+        chat_window.geometry("400x300")
+
+        chat_text = tk.Text(chat_window)
+        chat_text.pack(expand=True, fill='both')
+
+        def update_chat():
+            # Clear previous messages
+            chat_text.delete('1.0', tk.END)
+            # Retrieve messages from the ChatConsumer and display them
+            for message in self.client.chatConsumer.messages:
+                chat_text.insert(tk.END, message + '\n')
+
+            # Schedule the next update after 1 second
+            chat_window.after(1000, update_chat)
+
+        # Start updating the chat display
+        update_chat()
 
     def connect_to_chat(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
@@ -67,7 +92,6 @@ class ChatUI(tk.Tk):
                 channel = self.client.pubsub_channel_prefix + self.client.ip_address
                 pubsub = self.client.redis.pubsub()
                 pubsub.subscribe([channel])
-                print("asass")
                 for message in pubsub.listen():
                     if message['type'] == 'message':
                         # Change this line
@@ -81,12 +105,12 @@ class ChatUI(tk.Tk):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         message = simpledialog.askstring("Send Message", "message here bitch")
+        message = "@" + self.client.username + " : " + message
         if message:
             # Declare the exchange
             channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
             # Publish the message to the exchange with the routing key 'chatID'
             channel.basic_publish(exchange='chat_exchange', routing_key='chatID', body=message)
-
 
     def subscribe_to_group_chat(self):
         group_chat_id = simpledialog.askstring("Subscribe to Group Chat", "Enter group chat ID:")

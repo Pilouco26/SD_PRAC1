@@ -18,7 +18,7 @@ def main():
     channel.queue_bind(exchange='chat_exchange', queue=queue_name, routing_key='chatID')
 
     def callback(ch, method, properties, body):
-        print(f" [x] Received {body}")
+        print(body.decode('utf-8'))
 
     # Consume messages from the queue
     channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
