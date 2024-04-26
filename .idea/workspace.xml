@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a40070f9-26cf-4ee3-a925-0290b922b2a0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/auxiliars/serverGeneral.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bigChat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI conectada.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI conectada.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auxiliars/reciveRMQ.py" beforeDir="false" afterPath="$PROJECT_DIR$/receiveRMQ.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nameServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/nameServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bigChat.py" beforeDir="false" afterPath="$PROJECT_DIR$/bigChat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/redisServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/auxiliars/redisServer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +43,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.UI conectada.executor": "Run",
+    "Python.bigChat.executor": "Run",
     "Python.clientServer.executor": "Run",
     "Python.helloRMQ2.executor": "Run",
     "Python.main.executor": "Run",
@@ -94,6 +93,29 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/UI conectada.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="bigChat" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="sdpract" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bigChat.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -171,29 +193,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="receiveRMQ" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="sdpract" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\migue\PycharmProjects\sdpract\receiveRMQ.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="serverGeneral" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="sdpract" />
       <option name="ENV_FILES" value="" />
@@ -220,10 +219,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.UI conectada" />
-        <item itemvalue="Python.receiveRMQ (1)" />
         <item itemvalue="Python.nameServer" />
+        <item itemvalue="Python.bigChat" />
+        <item itemvalue="Python.receiveRMQ (1)" />
         <item itemvalue="Python.serverGeneral" />
-        <item itemvalue="Python.receiveRMQ" />
       </list>
     </recent_temporary>
   </component>
@@ -253,7 +252,10 @@
       <workItem from="1711365021327" duration="9412000" />
       <workItem from="1711381242886" duration="424000" />
       <workItem from="1711381677819" duration="2942000" />
-      <workItem from="1711395962224" duration="3659000" />
+      <workItem from="1711395962224" duration="3871000" />
+      <workItem from="1711545999863" duration="2639000" />
+      <workItem from="1713352427182" duration="237000" />
+      <workItem from="1714139614426" duration="2679000" />
     </task>
     <servers />
   </component>
@@ -280,11 +282,6 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/UI conectada.py</url>
-          <line>153</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/auxiliars/serverGeneral.py</url>
           <line>19</line>
           <option name="timeStamp" value="8" />
@@ -294,11 +291,12 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/sdpract$clientServer.coverage" NAME="clientServer Coverage Results" MODIFIED="1711365541842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$nameServer.coverage" NAME="nameServer Coverage Results" MODIFIED="1711398846957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$UI_conectada.coverage" NAME="UI conectada Coverage Results" MODIFIED="1711399590854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sdpract$nameServer.coverage" NAME="nameServer Coverage Results" MODIFIED="1714140903587" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sdpract$UI_conectada.coverage" NAME="UI conectada Coverage Results" MODIFIED="1714141980602" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$main.coverage" NAME="main Coverage Results" MODIFIED="1710783771405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$redisServer.coverage" NAME="redisServer Coverage Results" MODIFIED="1711371560608" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$receiveRMQ__1_.coverage" NAME="receiveRMQ (1) Coverage Results" MODIFIED="1711399327809" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sdpract$receiveRMQ__1_.coverage" NAME="receiveRMQ (1) Coverage Results" MODIFIED="1711546138963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sdpract$bigChat.coverage" NAME="bigChat Coverage Results" MODIFIED="1714140710916" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$reciveRMQ.coverage" NAME="reciveRMQ Coverage Results" MODIFIED="1711382943436" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
     <SUITE FILE_PATH="coverage/sdpract$reciveRMQ__1_.coverage" NAME="reciveRMQ (1) Coverage Results" MODIFIED="1711396936391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$serverGeneral.coverage" NAME="serverGeneral Coverage Results" MODIFIED="1711398833349" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -1,3 +1,4 @@
+import asyncio
 import socket
 import sys
 import tkinter as tk
@@ -6,7 +7,7 @@ from tkinter import simpledialog
 import pika
 import redis
 
-from bigChat import ChatConsumer
+from bigChat import ChatConsumer, MessageHandler
 
 
 class Client:
@@ -19,6 +20,23 @@ class Client:
         self.message_queue_key = 'petitions'
         self.pubsub_channel_prefix = 'petition_channel:'
         self.chatConsumer = ChatConsumer()
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
+        result = self.channel.queue_declare(queue='', exclusive=True)
+        self.queue_name = result.method.queue
+        self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='chatID')
+        self.messages = []  # Store received messages here
+
+        def callback(ch, method, properties, body):
+            # Process the message and store it in self.messages
+            self.messages.append(body.decode())  # Assuming messages are bytes, decode them
+            print(f"{body.decode()}")  # Print the message for reference
+
+        self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
+
+    def connect_to_chat(self, chat_id):
+        self.channel.start_consuming()
 
     def register(self, petition_data):
         if isinstance(petition_data, Client):
@@ -53,26 +71,15 @@ class ChatUI(tk.Tk):
             button = tk.Button(self, text=option, command=self.options[option])
             button.pack()
 
+        self.display_chat_active = False  # Flag to indicate if chat display is active
+
     def display_chat(self):
-        chat_window = tk.Toplevel(self)
-        chat_window.title("Chat Display")
-        chat_window.geometry("400x300")
-
-        chat_text = tk.Text(chat_window)
-        chat_text.pack(expand=True, fill='both')
-
-        def update_chat():
-            # Clear previous messages
-            chat_text.delete('1.0', tk.END)
-            # Retrieve messages from the ChatConsumer and display them
-            for message in self.client.chatConsumer.messages:
-                chat_text.insert(tk.END, message + '\n')
-
-            # Schedule the next update after 1 second
-            chat_window.after(1000, update_chat)
-
-        # Start updating the chat display
-        update_chat()
+        if not self.display_chat_active:
+            self.client.start_display_chat()
+            self.display_chat_active = True
+        else:
+            self.client.stop_display_chat()
+            self.display_chat_active = False
 
     def connect_to_chat(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
@@ -139,6 +146,14 @@ def get_local_ip_and_port():
     return ip_address, port
 
 
+import threading
+
+
+def start_message_handler():
+    message_handler2 = MessageHandler()
+    asyncio.run(message_handler2.chat_consumer.start_consuming())
+
+
 def main():
     username = simpledialog.askstring("Username", "Enter your username:")
     if not username:
@@ -148,8 +163,15 @@ def main():
     client = Client(username, ip_address, port)
     client.register(client)
     iu = ChatUI(client)
-    iu.mainloop()  # Start the GUI event loop
+
+    # Start a new thread to execute start_message_handler while the Tkinter window is open
+    thread = threading.Thread(target=start_message_handler)
+    thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits
+    thread.start()
+
+    iu.mainloop()
 
 
 if __name__ == "__main__":
     main()
+
