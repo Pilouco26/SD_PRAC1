@@ -58,7 +58,6 @@ if __name__ == '__main__':
     try:
         message_handler = MessageHandler()
         message_displayer = MessageDisplayer(message_handler)
-        asyncio.run(message_handler.chat_consumer.start_consuming())
         message_displayer.display_messages()
     except KeyboardInterrupt:
         print('Interrupted')

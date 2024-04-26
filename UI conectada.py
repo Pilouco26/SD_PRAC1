@@ -24,8 +24,9 @@ class Client:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
-        self.queue_name = result.method.queue
         self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='chatID')
+        self.queue_name = result.method.queue
+
         self.messages = []  # Store received messages here
 
         def callback(ch, method, properties, body):
@@ -36,7 +37,17 @@ class Client:
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
 
     def connect_to_chat(self, chat_id):
-        self.channel.start_consuming()
+        print("This is the chat id:"+chat_id)
+        chat_id = str(chat_id)
+        # Attempt to bind the queue with the chat ID as routing key
+        result = self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='hola')
+
+        # Check if binding was successful (result.response code should be 0)
+        if result.method.NAME == 'Queue.BindOk':
+            print(f"Successfully bound to chat ID: {chat_id}")
+            self.channel.start_consuming()
+        else:
+            print(f"Failed to bind to chat ID: {chat_id}. Error code: {result.response}")
 
     def register(self, petition_data):
         if isinstance(petition_data, Client):
@@ -58,7 +69,7 @@ class ChatUI(tk.Tk):
         self.label.pack(pady=10)
 
         self.options = {
-            "Connect chat": self.connect_to_chat,
+            "Connect chat": self.connectChatDisplayer,
             "Subscribe to group chat": self.subscribe_to_group_chat,
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
@@ -81,8 +92,9 @@ class ChatUI(tk.Tk):
             self.client.stop_display_chat()
             self.display_chat_active = False
 
-    def connect_to_chat(self):
+    def connectChatDisplayer(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
+        print(chat_id)
         if chat_id:
             self.client.connect_to_chat(chat_id)
 
