@@ -24,8 +24,9 @@ class Client:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
-        self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='chatID')
+
         self.queue_name = result.method.queue
+        self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='kola')
 
         self.messages = []  # Store received messages here
 
@@ -45,7 +46,10 @@ class Client:
         # Check if binding was successful (result.response code should be 0)
         if result.method.NAME == 'Queue.BindOk':
             print(f"Successfully bound to chat ID: {chat_id}")
-            self.channel.start_consuming()
+            self.chatConsumer.stop_consuming()
+            thread = threading.Thread(target=start_message_handler)
+            thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits
+            thread.start()
         else:
             print(f"Failed to bind to chat ID: {chat_id}. Error code: {result.response}")
 
@@ -129,7 +133,7 @@ class ChatUI(tk.Tk):
             # Declare the exchange
             channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
             # Publish the message to the exchange with the routing key 'chatID'
-            channel.basic_publish(exchange='chat_exchange', routing_key='chatID', body=message)
+            channel.basic_publish(exchange='chat_exchange', routing_key='hola', body=message)
 
     def subscribe_to_group_chat(self):
         group_chat_id = simpledialog.askstring("Subscribe to Group Chat", "Enter group chat ID:")
