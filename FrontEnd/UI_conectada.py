@@ -3,30 +3,32 @@ import socket
 import sys
 import tkinter as tk
 from tkinter import simpledialog
-
+import threading
 import pika
 import redis
 
-from bigChat import ChatConsumer, MessageHandler
+from BackEnd.bigChat import ChatConsumer, MessageHandler
 
 
 class Client:
+
     def __init__(self, username, ip_address, port):
         self.username = username
         self.ip_address = ip_address
         self.port = port
         self.redis = redis.Redis(host='localhost', port=6379, db=0)
         self.message_queue_key = 'petitions'
-        self.message_queue_key = 'petitions'
         self.pubsub_channel_prefix = 'petition_channel:'
         self.chatConsumer = ChatConsumer()
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
-        self.channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
+        global nomChat
+        nomChat = "chat1"
+        self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
 
         self.queue_name = result.method.queue
-        self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='kola')
+        self.channel.queue_bind(exchange=nomChat, queue=self.queue_name, routing_key='chatID')
 
         self.messages = []  # Store received messages here
 
@@ -40,8 +42,16 @@ class Client:
     def connect_to_chat(self, chat_id):
         print("This is the chat id:"+chat_id)
         chat_id = str(chat_id)
+        global nomChat
+        nomChat = chat_id
+        self.chatConsumer = ChatConsumer()
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         # Attempt to bind the queue with the chat ID as routing key
-        result = self.channel.queue_bind(exchange='chat_exchange', queue=self.queue_name, routing_key='hola')
+        self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
+        result = self.channel.queue_declare(queue='', exclusive=True)
+
+        self.queue_name = result.method.queue
+        result = self.channel.queue_bind(exchange=nomChat, queue=self.queue_name, routing_key='chatID')
 
         # Check if binding was successful (result.response code should be 0)
         if result.method.NAME == 'Queue.BindOk':
@@ -125,15 +135,16 @@ class ChatUI(tk.Tk):
                         break  # Stop listening after receiving the first message
 
     def send_message_group(self):
+        global nomChat
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         message = simpledialog.askstring("Send Message", "message here bitch")
         message = "@" + self.client.username + " : " + message
         if message:
             # Declare the exchange
-            channel.exchange_declare(exchange='chat_exchange', exchange_type='direct')
+            channel.exchange_declare(exchange=nomChat, exchange_type='direct')
             # Publish the message to the exchange with the routing key 'chatID'
-            channel.basic_publish(exchange='chat_exchange', routing_key='hola', body=message)
+            channel.basic_publish(exchange=nomChat, routing_key='chatID', body=message)
 
     def subscribe_to_group_chat(self):
         group_chat_id = simpledialog.askstring("Subscribe to Group Chat", "Enter group chat ID:")
@@ -162,7 +173,7 @@ def get_local_ip_and_port():
     return ip_address, port
 
 
-import threading
+
 
 
 def start_message_handler():
@@ -184,7 +195,6 @@ def main():
     thread = threading.Thread(target=start_message_handler)
     thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits
     thread.start()
-
     iu.mainloop()
 
 
