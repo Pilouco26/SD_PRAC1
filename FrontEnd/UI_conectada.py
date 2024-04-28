@@ -1,75 +1,13 @@
-import asyncio
 import socket
 import sys
+import threading
 import tkinter as tk
 from tkinter import simpledialog
-import threading
+
 import pika
 import redis
 
-from BackEnd.bigChat import ChatConsumer, MessageHandler
-
-
-class Client:
-
-    def __init__(self, username, ip_address, port):
-        self.username = username
-        self.ip_address = ip_address
-        self.port = port
-        self.redis = redis.Redis(host='localhost', port=6379, db=0)
-        self.message_queue_key = 'petitions'
-        self.pubsub_channel_prefix = 'petition_channel:'
-        self.chatConsumer = ChatConsumer()
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        self.channel = self.connection.channel()
-        global nomChat
-        nomChat = "chat1"
-        self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
-        result = self.channel.queue_declare(queue='', exclusive=True)
-
-        self.queue_name = result.method.queue
-        self.channel.queue_bind(exchange=nomChat, queue=self.queue_name, routing_key='chatID')
-
-        self.messages = []  # Store received messages here
-
-        def callback(ch, method, properties, body):
-            # Process the message and store it in self.messages
-            self.messages.append(body.decode())  # Assuming messages are bytes, decode them
-            print(f"{body.decode()}")  # Print the message for reference
-
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
-
-    def connect_to_chat(self, chat_id):
-        print("This is the chat id:"+chat_id)
-        chat_id = str(chat_id)
-        global nomChat
-        nomChat = chat_id
-        self.chatConsumer = ChatConsumer()
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        # Attempt to bind the queue with the chat ID as routing key
-        self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
-        result = self.channel.queue_declare(queue='', exclusive=True)
-
-        self.queue_name = result.method.queue
-        result = self.channel.queue_bind(exchange=nomChat, queue=self.queue_name, routing_key='chatID')
-
-        # Check if binding was successful (result.response code should be 0)
-        if result.method.NAME == 'Queue.BindOk':
-            print(f"Successfully bound to chat ID: {chat_id}")
-            self.chatConsumer.stop_consuming()
-            thread = threading.Thread(target=start_message_handler)
-            thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits
-            thread.start()
-        else:
-            print(f"Failed to bind to chat ID: {chat_id}. Error code: {result.response}")
-
-    def register(self, petition_data):
-        if isinstance(petition_data, Client):
-            data = petition_data.username + ':' + petition_data.ip_address + ':' + str(petition_data.port) + ":r"
-            self.redis.lpush(self.message_queue_key, data)
-            print("Petition sent successfully.")
-        else:
-            print("Error: petition_data should be an instance of the Client class.")
+from FrontEnd.Client import Client, MessageHandler
 
 
 class ChatUI(tk.Tk):
@@ -173,12 +111,14 @@ def get_local_ip_and_port():
     return ip_address, port
 
 
+class MessageDisplayer:
+    def __init__(self, message_handler):
+        self.message_handler = message_handler
 
-
-
-def start_message_handler():
-    message_handler2 = MessageHandler()
-    asyncio.run(message_handler2.chat_consumer.start_consuming())
+    def display_messages(self):
+        messages = self.message_handler.get_messages()
+        for message in messages:
+            print("Message:", message)
 
 
 def main():
@@ -191,8 +131,10 @@ def main():
     client.register(client)
     iu = ChatUI(client)
 
+    message_handler = MessageHandler(username, ip_address, port)
+    message_displayer = MessageDisplayer(message_handler)
     # Start a new thread to execute start_message_handler while the Tkinter window is open
-    thread = threading.Thread(target=start_message_handler)
+    thread = threading.Thread(target=iu.client.start_message_handler)
     thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits
     thread.start()
     iu.mainloop()
@@ -200,4 +142,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

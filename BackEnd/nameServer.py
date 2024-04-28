@@ -1,6 +1,8 @@
 import redis
 import pika
 
+from BackEnd.bigChat import ChatConsumer
+
 redis_host = "localhost"
 redis_port = 6379
 redis_password = ""
@@ -19,6 +21,7 @@ class NameServer:
         self.redis = redis.StrictRedis(host=redis_host, port=redis_port, password=redis_password, decode_responses=True)
         self.message_queue_key = 'petitions'
         self.pubsub_channel_prefix = 'petition_channel:'
+        self.exchange_names = []
 
     def register(self, username, ip_address, port):
         self.redis.hset('chat:{}'.format(username), 'ip', ip_address)
@@ -64,8 +67,22 @@ class NameServer:
                             print("No info found for username:", username)
                     else:
                         print("Invalid petition format:", petition)
+                # Si no esta creat, crear-lo i retornar id
+                elif (len(parts) == 2):
+                    petition, exchange_name = parts
+                    if exchange_name not in self.exchange_names:
+                        self.create_chat(exchange_name)
+
                 else:
+
                     print("Invalid petition format:", petition)
+
+    # DEMANAR PETICIÓ
+    def create_chat(self, exchange_name):
+        ChatConsumer(exchange_name)
+        name_server.exchange_names.append(exchange_name)
+
+    # crear xat
 
 
 if __name__ == "__main__":
