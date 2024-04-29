@@ -4,6 +4,8 @@ service PrivateChat {
   rpc Connect (ConnectRequest) returns (ConnectResponse) {}
   rpc SendMessage (Message) returns (MessageAck) {}
   rpc ReceiveMessages (Empty) returns (stream Message) {}
+  rpc IsUserConnected(ConnectRequest) returns (ConnectResponse) {}
+  rpc Disconnect(ConnectRequest) returns (ConnectResponse) {}
 }
 
 message ConnectRequest {

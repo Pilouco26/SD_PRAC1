@@ -48,15 +48,12 @@ class PrivateChatClient:
         else:
             print("Fallo al desconectar")
 
-    
 def start_receiving_messages(client):
     threading.Thread(target=client.receive_messages).start()
 
-client1 = PrivateChatClient('Oriol')
-client1.connect()
-while not client1.is_user_connected('Miguel'):
-    print("Esperando a que Miguel se conecte...")
-    time.sleep(1)
-start_receiving_messages(client1)
-client1.send_message('Miguel', 'Hola Miguel')
-client1.send_message('Miguel', 'Com estas?')
+client2 = PrivateChatClient('Miguel')
+client2.connect()
+start_receiving_messages(client2)
+client2.send_message('Oriol', 'Hola')
+client2.send_message('Oriol', 'Be i tu?')
+client2.disconnect()

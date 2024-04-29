@@ -29,6 +29,19 @@ class PrivateChatServicer(xatPrivat_pb2_grpc.PrivateChatServicer):
             if not self.messages[request.username].empty():
                 yield self.messages[request.username].get()
 
+    def IsUserConnected(self, request, context):
+        # Verifica si el usuario está conectado
+        return xatPrivat_pb2.ConnectResponse(success=request.username in self.clients)
+    
+    def Disconnect(self, request, context):
+        # Elimina al usuario de los clientes conectados
+        if request.username in self.clients:
+            del self.clients[request.username]
+            del self.messages[request.username]
+            return xatPrivat_pb2.ConnectResponse(success=True)
+        else:
+            return xatPrivat_pb2.ConnectResponse(success=False)
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

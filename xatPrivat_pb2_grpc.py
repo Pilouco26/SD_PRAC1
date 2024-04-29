@@ -29,6 +29,16 @@ class PrivateChatStub(object):
                 request_serializer=xatPrivat__pb2.Empty.SerializeToString,
                 response_deserializer=xatPrivat__pb2.Message.FromString,
                 )
+        self.IsUserConnected = channel.unary_unary(
+                '/PrivateChat/IsUserConnected',
+                request_serializer=xatPrivat__pb2.ConnectRequest.SerializeToString,
+                response_deserializer=xatPrivat__pb2.ConnectResponse.FromString,
+                )
+        self.Disconnect = channel.unary_unary(
+                '/PrivateChat/Disconnect',
+                request_serializer=xatPrivat__pb2.ConnectRequest.SerializeToString,
+                response_deserializer=xatPrivat__pb2.ConnectResponse.FromString,
+                )
 
 
 class PrivateChatServicer(object):
@@ -52,6 +62,18 @@ class PrivateChatServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def IsUserConnected(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Disconnect(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PrivateChatServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +91,16 @@ def add_PrivateChatServicer_to_server(servicer, server):
                     servicer.ReceiveMessages,
                     request_deserializer=xatPrivat__pb2.Empty.FromString,
                     response_serializer=xatPrivat__pb2.Message.SerializeToString,
+            ),
+            'IsUserConnected': grpc.unary_unary_rpc_method_handler(
+                    servicer.IsUserConnected,
+                    request_deserializer=xatPrivat__pb2.ConnectRequest.FromString,
+                    response_serializer=xatPrivat__pb2.ConnectResponse.SerializeToString,
+            ),
+            'Disconnect': grpc.unary_unary_rpc_method_handler(
+                    servicer.Disconnect,
+                    request_deserializer=xatPrivat__pb2.ConnectRequest.FromString,
+                    response_serializer=xatPrivat__pb2.ConnectResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -128,5 +160,39 @@ class PrivateChat(object):
         return grpc.experimental.unary_stream(request, target, '/PrivateChat/ReceiveMessages',
             xatPrivat__pb2.Empty.SerializeToString,
             xatPrivat__pb2.Message.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def IsUserConnected(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/PrivateChat/IsUserConnected',
+            xatPrivat__pb2.ConnectRequest.SerializeToString,
+            xatPrivat__pb2.ConnectResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Disconnect(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/PrivateChat/Disconnect',
+            xatPrivat__pb2.ConnectRequest.SerializeToString,
+            xatPrivat__pb2.ConnectResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
