@@ -20,10 +20,12 @@ class NameServer:
     def __init__(self):
         self.redis = redis.StrictRedis(host=redis_host, port=redis_port, password=redis_password, decode_responses=True)
         self.message_queue_key = 'petitions'
+        self.message_queue_display_key = 'display'
         self.pubsub_channel_prefix = 'petition_channel:'
+        self.pubsub_channel_display_prefix = 'display_channel:'
         self.exchange_names = []
 
-    def register(self, username, ip_address, port):
+    def register_user(self, username, ip_address, port):
         self.redis.hset('chat:{}'.format(username), 'ip', ip_address)
         self.redis.hset('chat:{}'.format(username), 'port', port)
 
@@ -38,9 +40,13 @@ class NameServer:
     def push_petition(self, petition):
         self.redis.lpush(self.message_queue_key, petition)
 
+    def send_chats(self):
+        return self.exchange_names
+
     def process_petitions(self):
         while True:
             petition = self.redis.lpop(self.message_queue_key)  # Use lpop
+            petitionDisplay = self.redis.lpop(self.message_queue_display_key)
             if petition:
                 # Split the petition into its components
                 parts = petition.split(':')
@@ -48,7 +54,7 @@ class NameServer:
                     username, ip_address, port, r = parts
                     # Check if the petition has the correct format
                     if username and ip_address and port:
-                        self.register(username, ip_address, port)
+                        self.register_user(username, ip_address, port)
                         print('Registered')
                     else:
                         print("Invalid petition format:", petition)
@@ -68,14 +74,21 @@ class NameServer:
                     else:
                         print("Invalid petition format:", petition)
                 # Si no esta creat, crear-lo i retornar id
-                elif (len(parts) == 2):
+                elif len(parts) == 2:
                     petition, exchange_name = parts
                     if exchange_name not in self.exchange_names:
                         self.create_chat(exchange_name)
-
                 else:
-
                     print("Invalid petition format:", petition)
+            if petitionDisplay:
+                channelDisplay = self.pubsub_channel_display_prefix
+                messages = self.exchange_names
+                # Publish the information to a channel associated with the sender's IP
+                if len(messages) > 0:
+                    self.redis.publish(channelDisplay, ":".join(messages))
+                    print('Published info')
+                else:
+                    self.redis.publish(channelDisplay, "no chats")
 
     # DEMANAR PETICIÓ
     def create_chat(self, exchange_name):
@@ -89,5 +102,5 @@ if __name__ == "__main__":
     # Example usage
     name_server = NameServer()
     # test
-    name_server.register("prova", "68.69.69.69", 5050)
+    name_server.register_user("prova", "68.69.69.69", 5050)
     name_server.process_petitions()
