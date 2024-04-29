@@ -41,9 +41,18 @@ class Client:
         nomChat = chat_id
         data = "connection:" + nomChat
         self.redis.lpush(self.message_queue_key, data)
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        thread = threading.Thread(target=self.configuration_chat, args=(chat_id,))
+        thread.daemon = True
+        thread.start()
 
+
+
+
+    def configuration_chat(self, chat_id):
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.connection.channel()
         # Attempt to bind the queue with the chat ID as routing key
+        # CREAR THREAD
         self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
 
@@ -80,8 +89,7 @@ class Client:
     # error callback
     def start_message_handler(self):
         while True:
-            self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
-            self.channel.start_consuming()
+            self.start_consuming()
 
     def start_consuming(self):
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)

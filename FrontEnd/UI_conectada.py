@@ -7,7 +7,7 @@ from tkinter import simpledialog
 import pika
 import redis
 
-from FrontEnd.Client import Client, MessageHandler
+from FrontEnd.Client import Client, MessageHandler, MessageDisplayer
 
 
 class ChatUI(tk.Tk):
@@ -45,9 +45,11 @@ class ChatUI(tk.Tk):
             self.display_chat_active = False
 
     def connectChatDisplayer(self):
+        global nomChat
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
         print(chat_id)
         if chat_id:
+            nomChat = chat_id
             self.client.connect_to_chat(chat_id)
 
     def get_ip_nameserver(self):
@@ -109,16 +111,6 @@ def get_local_ip_and_port():
     port = s.getsockname()[1]
     s.close()
     return ip_address, port
-
-
-class MessageDisplayer:
-    def __init__(self, message_handler):
-        self.message_handler = message_handler
-
-    def display_messages(self):
-        messages = self.message_handler.get_messages()
-        for message in messages:
-            print("Message:", message)
 
 
 def main():
