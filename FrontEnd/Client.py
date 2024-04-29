@@ -13,18 +13,9 @@ class Client:
         self.redis = redis.Redis(host='localhost', port=6379, db=0)
         self.message_queue_key = 'petitions'
         self.pubsub_channel_prefix = 'petition_channel:'
-        ##ERROR AQUI AMB LA CONEXIO(docker)
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        self.channel = self.connection.channel()
+        self.nomChat = "init"
+        self.conf(self.nomChat)
         self.message_callback = None
-        global nomChat
-        nomChat = "chat1"
-        self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
-        result = self.channel.queue_declare(queue='', exclusive=True)
-
-        self.queue_name = result.method.queue
-        self.channel.queue_bind(exchange=nomChat, queue=self.queue_name, routing_key='chatID')
-
         self.messages = []  # Store received messages here
 
         def callback(ch, method, properties, body):
@@ -37,28 +28,31 @@ class Client:
     def connect_to_chat(self, chat_id):
         print("This is the chat id:" + chat_id)
         chat_id = str(chat_id)
-        global nomChat
-        nomChat = chat_id
-        data = "connection:" + nomChat
+        self.nomChat = chat_id
+        data = "connection:" + self.nomChat
         self.redis.lpush(self.message_queue_key, data)
         thread = threading.Thread(target=self.configuration_chat, args=(chat_id,))
         thread.daemon = True
         thread.start()
 
-
-
-
-    def configuration_chat(self, chat_id):
+    # Sets channel
+    def conf(self, chat_id):
+        self.nomChat = chat_id
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
         # Attempt to bind the queue with the chat ID as routing key
         # CREAR THREAD
-        self.channel.exchange_declare(exchange=nomChat, exchange_type='direct')
+        self.channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
 
         self.queue_name = result.method.queue
-        result = self.channel.queue_bind(exchange=nomChat, queue=self.queue_name, routing_key='chatID')
+        result = self.channel.queue_bind(exchange=self.nomChat, queue=self.queue_name, routing_key='chatID')
+        return result
 
+    # Checks and calls Handler
+    def configuration_chat(self, chat_id):
+
+        result = self.conf(chat_id)
         # Check if binding was successful (result.response code should be 0)
         if result.method.NAME == 'Queue.BindOk':
             print(f"Successfully bound to chat ID: {chat_id}")
@@ -74,9 +68,6 @@ class Client:
         else:
             print("Error: petition_data should be an instance of the Client class.")
 
-    # PROVA FUNCIONALITATS
-    # PROVAR 2 CLIENTS EN EL MATEIX XAT
-
     def set_message_callback(self, callback):
         self.message_callback = callback
 
@@ -87,38 +78,13 @@ class Client:
         if self.message_callback:
             self.message_callback(message)
 
-    # error callback
     def start_message_handler(self):
         while True:
             self.start_consuming()
 
     def start_consuming(self):
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
-        message = self.channel.start_consuming()
-        print(message)
+        self.channel.start_consuming()
 
     def stop_consuming(self):
         self.channel.stop_consuming()
-
-
-class MessageHandler:
-    def __init__(self, username, ip_address, port):
-        self.chat_consumer = Client(username, ip_address, port)
-        self.chat_consumer.set_message_callback(self.handle_message)
-
-    def handle_message(self, message):
-        print(message)
-        # Add your message handling logic here
-
-    def get_messages(self):
-        return self.chat_consumer.messages
-
-
-class MessageDisplayer:
-    def __init__(self, message_handler):
-        self.message_handler = message_handler
-
-    def display_messages(self):
-        messages = self.message_handler.get_messages()
-        for message in messages:
-            print("Message:", message)

@@ -6,7 +6,9 @@ from tkinter import simpledialog
 
 import pika
 
-from FrontEnd.Client import Client, MessageHandler, MessageDisplayer
+from FrontEnd.Client import Client
+from FrontEnd.MessageDisplayer import MessageDisplayer
+from FrontEnd.MessageHandler import MessageHandler
 
 
 class ChatUI(tk.Tk):
