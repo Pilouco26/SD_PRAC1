@@ -7,6 +7,9 @@ import redis
 class Client:
 
     def __init__(self, username, ip_address, port):
+        self.queue_name = None
+        self.channel = None
+        self.connection = None
         self.username = username
         self.ip_address = ip_address
         self.port = port
@@ -18,12 +21,6 @@ class Client:
         self.message_callback = None
         self.messages = []  # Store received messages here
 
-        def callback(ch, method, properties, body):
-            # Process the message and store it in self.messages
-            self.messages.append(body.decode())  # Assuming messages are bytes, decode them
-            print(f"{body.decode()}")  # Print the message for reference
-
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
 
     def connect_to_chat(self, chat_id):
         print("This is the chat id:" + chat_id)
@@ -40,7 +37,6 @@ class Client:
         self.nomChat = chat_id
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
-        # Attempt to bind the queue with the chat ID as routing key
         # CREAR THREAD
         self.channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
