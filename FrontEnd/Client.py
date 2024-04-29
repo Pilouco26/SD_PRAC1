@@ -83,6 +83,7 @@ class Client:
     def callback(self, ch, method, properties, body):
         message = body.decode()
         self.messages.append(message)  # Save the message
+        print(message)
         if self.message_callback:
             self.message_callback(message)
 
@@ -93,7 +94,8 @@ class Client:
 
     def start_consuming(self):
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
-        self.channel.start_consuming()
+        message = self.channel.start_consuming()
+        print(message)
 
     def stop_consuming(self):
         self.channel.stop_consuming()
