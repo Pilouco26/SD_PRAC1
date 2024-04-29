@@ -5,7 +5,6 @@ import tkinter as tk
 from tkinter import simpledialog
 
 import pika
-import redis
 
 from FrontEnd.Client import Client, MessageHandler, MessageDisplayer
 
@@ -16,6 +15,7 @@ class ChatUI(tk.Tk):
         self.client = client
         self.title("Client UI")
         self.geometry("400x300")
+        self.nomChat = "init"
 
         self.label = tk.Label(self, text="Welcome, " + self.client.username)
         self.label.pack(pady=10)
@@ -26,7 +26,7 @@ class ChatUI(tk.Tk):
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
             "Test nameserver": self.get_ip_nameserver,
-            "Test group": self.send_message_group,
+            "Write in group": self.send_message_group,
             "Display Chat": self.display_chat
         }
 
@@ -45,11 +45,10 @@ class ChatUI(tk.Tk):
             self.display_chat_active = False
 
     def connectChatDisplayer(self):
-        global nomChat
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
         print(chat_id)
         if chat_id:
-            nomChat = chat_id
+            self.nomChat = chat_id
             self.client.connect_to_chat(chat_id)
 
     def get_ip_nameserver(self):
@@ -75,16 +74,15 @@ class ChatUI(tk.Tk):
                         break  # Stop listening after receiving the first message
 
     def send_message_group(self):
-        global nomChat
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         message = simpledialog.askstring("Send Message", "message here bitch")
         message = "@" + self.client.username + " : " + message
         if message:
             # Declare the exchange
-            channel.exchange_declare(exchange=nomChat, exchange_type='direct')
+            channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
             # Publish the message to the exchange with the routing key 'chatID'
-            channel.basic_publish(exchange=nomChat, routing_key='chatID', body=message)
+            channel.basic_publish(exchange=self.nomChat, routing_key='chatID', body=message)
 
     def subscribe_to_group_chat(self):
         group_chat_id = simpledialog.askstring("Subscribe to Group Chat", "Enter group chat ID:")
