@@ -1,6 +1,7 @@
 import socket
 import sys
 import threading
+import time
 import tkinter as tk
 from tkinter import simpledialog
 
@@ -18,7 +19,7 @@ class ChatUI(tk.Tk):
         self.title("Client UI")
         self.geometry("400x300")
         self.nomChat = "init"
-
+        self.chats = []
         self.label = tk.Label(self, text="Welcome, " + self.client.username)
         self.label.pack(pady=10)
 
@@ -75,6 +76,10 @@ class ChatUI(tk.Tk):
                         # You can now establish a connection using this IP address and port
                         break  # Stop listening after receiving the first message
 
+    # RABBIT MQ
+    def get_chats(self):
+        self.client.chat_discovery()
+
     def send_message_group(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
@@ -92,7 +97,10 @@ class ChatUI(tk.Tk):
             self.client.subscribe_to_group_chat(group_chat_id)
 
     def discover_chats(self):
-        self.client.discover_chats()
+        self.get_chats()
+        self.client.redis.lpush(self.client.message_queue_key, "chat_discovery")
+
+        print("Petition sent successfully.")
 
     def access_insult_channel(self):
         insult_message = simpledialog.askstring("Insult Channel", "Enter insult message:")
