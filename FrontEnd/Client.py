@@ -29,7 +29,6 @@ class Client:
         self.messages = []  # Store received messages here
 
     def connect_to_chat(self, chat_id):
-        print("This is the chat id:" + chat_id)
         chat_id = str(chat_id)
         self.nomChat = chat_id
         data = "connection:" + self.nomChat
@@ -43,10 +42,9 @@ class Client:
         self.nomChat = chat_id
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
-        # CREAR THREAD
+        # Nomes s'han de fer un cop!!!
         self.channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
-        print("estic en : "+self.nomChat)
         self.queue_name = result.method.queue
         result = self.channel.queue_bind(exchange=self.nomChat, queue=self.queue_name, routing_key='chatID')
         return result
@@ -83,11 +81,8 @@ class Client:
 
     def callback(self, ch, method, properties, body):
         message = body.decode()
-        if isinstance(message, str):  # Check if message is a string
-            self.messages.append(message)  # Save the message
-            print(message)
-        elif isinstance(message, list):  # Check if message is a list
-            print_messages(message)  # Call print_messages for array
+        self.messages.append(message)  # Save the message
+        print(message)
 
     def start_message_handler(self):
         while True:

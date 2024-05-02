@@ -25,12 +25,10 @@ class ChatUI(tk.Tk):
 
         self.options = {
             "Connect chat": self.connectChatDisplayer,
+            "Write in group connected": self.send_message_group,
             "Subscribe to group chat": self.subscribe_to_group_chat,
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
-            "Test nameserver": self.get_ip_nameserver,
-            "Write in group": self.send_message_group,
-            "Display Chat": self.display_chat
         }
 
         for option in self.options:
@@ -49,7 +47,7 @@ class ChatUI(tk.Tk):
 
     def connectChatDisplayer(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
-        print(chat_id)
+
         if chat_id:
             self.nomChat = chat_id
             self.client.connect_to_chat(chat_id)
@@ -99,7 +97,6 @@ class ChatUI(tk.Tk):
     def discover_chats(self):
         self.get_chats()
         self.client.redis.lpush(self.client.message_queue_key, "chat_discovery")
-
         print("Petition sent successfully.")
 
     def access_insult_channel(self):
@@ -132,7 +129,7 @@ def main():
     iu = ChatUI(client)
 
     message_handler = MessageHandler(username, ip_address, port)
-    message_displayer = MessageDisplayer(message_handler)
+    MessageDisplayer(message_handler)
     # Start a new thread to execute start_message_handler while the Tkinter window is open
     thread = threading.Thread(target=iu.client.start_message_handler)
     thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits

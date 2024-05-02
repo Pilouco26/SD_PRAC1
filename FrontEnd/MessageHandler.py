@@ -12,3 +12,16 @@ class MessageHandler:
 
     def get_messages(self):
         return self.chat_consumer.messages
+
+
+class MessageHandlerChat:
+    def __init__(self, chat):
+        self.chat_consumer = chat
+        self.chat_consumer.set_message_callback(self.handle_message)
+
+    def handle_message(self, message):
+        print(message)
+        # Add your message handling logic here
+
+    def get_messages(self):
+        return self.chat_consumer.messages
