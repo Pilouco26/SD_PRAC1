@@ -27,7 +27,8 @@ class Client:
         self.nomChat = "init"
         self.conf(self.nomChat)
         self.message_callback = None
-        self.messages = []  # Store received messages here
+        self.messages = {}  # Store received messages here
+
 
     def connect_to_chat(self, chat_id):
         chat_id = str(chat_id)
@@ -82,10 +83,11 @@ class Client:
         self.message_callback = callback
 
     def callback(self, ch, method, properties, body):
-        print("callback")
         message = body.decode()
-        self.messages.append(message)  # Save the message
         print(message)
+        self.messages[method.exchange] = message  # Save the message with exchange name as the key
+        if method.exchange == self.nomChat:
+            print(message)
 
     def start_message_handler(self):
         while True:

@@ -16,14 +16,14 @@ class ChatUI(tk.Tk):
         self.geometry("400x300")
         self.nomChat = "init"
         self.chats = []
+        self.chatsConnected = []
         self.label = tk.Label(self, text="Welcome, " + self.client.username)
         self.label.pack(pady=10)
 
         self.options = {
-            "Subscribe chat:": self.chatSubscriber,
-            "Connect chat": self.connectChatDisplayer,
+            "Connect to chat:": self.chat_connector,
+            "Subscribe to chat": self.chatSubscriber,
             "Write in group connected": self.send_message_group,
-            "Subscribe to group chat": self.subscribe_to_group_chat,
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
         }
@@ -42,19 +42,18 @@ class ChatUI(tk.Tk):
             self.client.stop_display_chat()
             self.display_chat_active = False
 
-    def connectChatDisplayer(self):
+    def chatSubscriber(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
 
         if chat_id:
-            self.nomChat = chat_id
             self.client.connect_to_chat(chat_id)
 
-    def chatSubscriber(self):
-        chat_id = simpledialog.askstring("Subscribe to Chat", "Enter chat ID:")
+    def chat_connector(self):
+        chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
 
         if chat_id:
+            print("Connected to Chat", chat_id)
             self.nomChat = chat_id
-            self.client.connect_to_chat(chat_id)
 
     def get_ip_nameserver(self):
         chat_id = simpledialog.askstring("get ip", "Enter chat ID:")
@@ -92,11 +91,6 @@ class ChatUI(tk.Tk):
             channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
             # Publish the message to the exchange with the routing key 'chatID'
             channel.basic_publish(exchange=self.nomChat, routing_key='chatID', body=message)
-
-    def subscribe_to_group_chat(self):
-        group_chat_id = simpledialog.askstring("Subscribe to Group Chat", "Enter group chat ID:")
-        if group_chat_id:
-            self.client.subscribe_to_group_chat(group_chat_id)
 
     def discover_chats(self):
         self.get_chats()
