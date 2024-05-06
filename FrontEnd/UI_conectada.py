@@ -1,7 +1,7 @@
 import socket
 import sys
 import tkinter as tk
-from tkinter import simpledialog
+from tkinter import simpledialog, messagebox
 
 import pika
 
@@ -17,6 +17,7 @@ class ChatUI(tk.Tk):
         self.nomChat = "discovery_chat"
         self.chats = []
         self.chatsSubscribed = ['chat_discovery']
+        self.chatsTransients = ['chat_discovery']
         self.label = tk.Label(self, text="Welcome, " + self.client.username)
         self.label.pack(pady=10)
         self.client.connect_to_chat("chat_discovery")
@@ -46,19 +47,29 @@ class ChatUI(tk.Tk):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
 
         if chat_id:
+            mode = messagebox.askquestion("Mode", "Transient", icon='question', type='yesno')
+            mode = 'transient' if mode == 'yes' else 'persistent'
             self.client.connect_to_chat(chat_id)
             self.chatsSubscribed.append(chat_id)
+            if mode == 'transient':
+                self.chatsTransients.append(chat_id)
+            print(f"Connected to chat {chat_id} in {mode} mode")
+        else:
+            print("Invalid chat ID")
 
     def chat_connector(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
         if chat_id and chat_id in self.chatsSubscribed:
-            print("Connected to Chat", chat_id)
-            self.nomChat = chat_id
-            self.client.connect_to_chat2(chat_id)
-            messages = self.client.messages
-            if chat_id in messages:
-                for message in messages[chat_id]:  # Iterate over the list of messages
-                    print(message)  # Print each message on a new line
+            if chat_id == self.nomChat:
+                print("Already connected")
+            else:
+                print("Connected to Chat", chat_id)
+                self.nomChat = chat_id
+                self.client.connect_to_chat2(chat_id)
+                messages = self.client.messages
+                if chat_id in messages and chat_id not in self.chatsTransients:
+                    for message in messages[chat_id]:  # Iterate over the list of messages
+                        print(message)  # Print each message on a new line
 
         else:
             print("No chat found, we need you to be subscribed to", chat_id)
