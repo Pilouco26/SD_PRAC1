@@ -2,7 +2,7 @@ import threading
 
 import pika
 import redis
-
+import ast
 
 def print_messages(messages):
     for i, message in enumerate(messages):
@@ -29,7 +29,6 @@ class Client:
         self.message_callback = None
         self.messages = {}  # Store received messages here
 
-
     def connect_to_chat(self, chat_id):
         chat_id = str(chat_id)
         self.nomChat = chat_id
@@ -38,6 +37,9 @@ class Client:
         thread = threading.Thread(target=self.configuration_chat, args=(chat_id,))
         thread.daemon = True
         thread.start()
+
+    def connect_to_chat2(self, chat_id):
+        self.nomChat = chat_id
 
     # Sets channel
     def conf(self, chat_id):
@@ -84,10 +86,17 @@ class Client:
 
     def callback(self, ch, method, properties, body):
         message = body.decode()
-        print(message)
         self.messages[method.exchange] = message  # Save the message with exchange name as the key
         if method.exchange == self.nomChat:
-            print(message)
+            if method.exchange != "chat_discovery":
+                print(message)
+            else:
+                # Check if message is a string representation of a list
+                if message.startswith('[') and message.endswith(']'):
+                    message_list = ast.literal_eval(message)
+                    print("These are the chats discovered:")
+                    for chat in message_list[1:]:  # Skip the first chat
+                        print(chat)
 
     def start_message_handler(self):
         while True:
@@ -96,7 +105,6 @@ class Client:
     def start_consuming(self):
         if self.channel.is_open and self.init is True:
             self._consume_in_thread()
-
 
     def _consume_in_thread(self):
         try:

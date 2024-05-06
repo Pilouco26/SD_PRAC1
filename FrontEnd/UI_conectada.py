@@ -14,14 +14,14 @@ class ChatUI(tk.Tk):
         self.client = client
         self.title("Client UI")
         self.geometry("400x300")
-        self.nomChat = "init"
+        self.nomChat = "discovery_chat"
         self.chats = []
-        self.chatsConnected = []
+        self.chatsSubscribed = ['chat_discovery']
         self.label = tk.Label(self, text="Welcome, " + self.client.username)
         self.label.pack(pady=10)
-
+        self.client.connect_to_chat("chat_discovery")
         self.options = {
-            "Connect to chat:": self.chat_connector,
+            "Connect to chat": self.chat_connector,
             "Subscribe to chat": self.chatSubscriber,
             "Write in group connected": self.send_message_group,
             "Discover chats": self.discover_chats,
@@ -47,13 +47,17 @@ class ChatUI(tk.Tk):
 
         if chat_id:
             self.client.connect_to_chat(chat_id)
+            self.chatsSubscribed.append(chat_id)
 
     def chat_connector(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
 
-        if chat_id:
+        if chat_id and chat_id in self.chatsSubscribed:
             print("Connected to Chat", chat_id)
             self.nomChat = chat_id
+            self.client.connect_to_chat2(chat_id)
+        else:
+            print("No chat found, we need you to be subscribed to", chat_id)
 
     def get_ip_nameserver(self):
         chat_id = simpledialog.askstring("get ip", "Enter chat ID:")
@@ -93,6 +97,7 @@ class ChatUI(tk.Tk):
             channel.basic_publish(exchange=self.nomChat, routing_key='chatID', body=message)
 
     def discover_chats(self):
+        self.nomChat = "chat_discovery"
         self.get_chats()
         self.client.redis.lpush(self.client.message_queue_key, "chat_discovery")
         print("Petition sent successfully.")
