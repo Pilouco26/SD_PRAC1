@@ -1,6 +1,10 @@
+import threading
+
 import pika
 import sys
 import os
+
+
 
 
 class ChatConsumer:

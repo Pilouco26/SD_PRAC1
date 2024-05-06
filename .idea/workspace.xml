@@ -6,7 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="a40070f9-26cf-4ee3-a925-0290b922b2a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/bigChat.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/bigChat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/bigChatPersistent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/bigChatPersistent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/nameServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/nameServer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FrontEnd/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/Client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/MessageDisplayer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/MessageHandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/UI_conectada.py" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/UI_conectada.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +48,7 @@
   "keyToString": {
     "Python.UI conectada (1).executor": "Run",
     "Python.UI conectada.executor": "Run",
-    "Python.UI_conectada (1).executor": "Debug",
+    "Python.UI_conectada (1).executor": "Run",
     "Python.bigChat (1).executor": "Run",
     "Python.bigChat.executor": "Run",
     "Python.clientServer.executor": "Run",
@@ -59,7 +65,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "miguel",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/migue/PycharmProjects/sdpract/auxiliars",
+    "last_opened_file_path": "C:/Users/migue/PycharmProjects/sdpract/BackEnd",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -71,6 +77,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\migue\PycharmProjects\sdpract\BackEnd" />
+      <recent name="C:\Users\migue\PycharmProjects\sdpract\FrontEnd" />
       <recent name="C:\Users\migue\PycharmProjects\sdpract\auxiliars" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -256,7 +264,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
+        <option value="bundled-python-sdk-09665e90c3a7-b11f5e8da5ad-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.15026.15" />
       </set>
     </attachedChunks>
   </component>
@@ -286,7 +294,14 @@
       <workItem from="1714301700989" duration="3368000" />
       <workItem from="1714311877633" duration="1703000" />
       <workItem from="1714322003577" duration="4915000" />
-      <workItem from="1714385295498" duration="1576000" />
+      <workItem from="1714385295498" duration="4368000" />
+      <workItem from="1714393759185" duration="6336000" />
+      <workItem from="1714483347008" duration="2234000" />
+      <workItem from="1714487005132" duration="1774000" />
+      <workItem from="1714590156307" duration="4006000" />
+      <workItem from="1714657062080" duration="4065000" />
+      <workItem from="1714741373511" duration="6000" />
+      <workItem from="1714991831846" duration="2557000" />
     </task>
     <servers />
   </component>
@@ -318,39 +333,9 @@
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/BackEnd/nameServer.py</url>
-          <line>82</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/BackEnd/nameServer.py</url>
-          <line>81</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/FrontEnd/UI_conectada.py</url>
-          <line>86</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/FrontEnd/Client.py</url>
-          <line>109</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/FrontEnd/Client.py</url>
-          <line>105</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/FrontEnd/Client.py</url>
-          <line>92</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/FrontEnd/Client.py</url>
-          <line>83</line>
-          <option name="timeStamp" value="16" />
+          <line>85</line>
+          <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -364,7 +349,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/sdpract$nameServer.coverage" NAME="nameServer Coverage Results" MODIFIED="1714147658602" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$main.coverage" NAME="main Coverage Results" MODIFIED="1710783771405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$nameServer__1_.coverage" NAME="nameServer (1) Coverage Results" MODIFIED="1714386290907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BackEnd" />
+    <SUITE FILE_PATH="coverage/sdpract$nameServer__1_.coverage" NAME="nameServer (1) Coverage Results" MODIFIED="1714657747477" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BackEnd" />
     <SUITE FILE_PATH="coverage/sdpract$bigChat.coverage" NAME="bigChat Coverage Results" MODIFIED="1714144934134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$helloRMQ2.coverage" NAME="helloRMQ2 Coverage Results" MODIFIED="1711382953026" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
     <SUITE FILE_PATH="coverage/sdpract$clientServer.coverage" NAME="clientServer Coverage Results" MODIFIED="1711365541842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -373,7 +358,7 @@
     <SUITE FILE_PATH="coverage/sdpract$receiveRMQ__1_.coverage" NAME="receiveRMQ (1) Coverage Results" MODIFIED="1711546138963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$reciveRMQ.coverage" NAME="reciveRMQ Coverage Results" MODIFIED="1711382943436" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
     <SUITE FILE_PATH="coverage/sdpract$reciveRMQ__1_.coverage" NAME="reciveRMQ (1) Coverage Results" MODIFIED="1711396936391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$UI_conectada__1_.coverage" NAME="UI_conectada (1) Coverage Results" MODIFIED="1714386421680" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FrontEnd" />
+    <SUITE FILE_PATH="coverage/sdpract$UI_conectada__1_.coverage" NAME="UI_conectada (1) Coverage Results" MODIFIED="1714994293281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FrontEnd" />
     <SUITE FILE_PATH="coverage/sdpract$bigChat__1_.coverage" NAME="bigChat (1) Coverage Results" MODIFIED="1714313468142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BackEnd" />
     <SUITE FILE_PATH="coverage/sdpract$serverGeneral.coverage" NAME="serverGeneral Coverage Results" MODIFIED="1711398833349" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

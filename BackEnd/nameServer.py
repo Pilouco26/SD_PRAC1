@@ -1,30 +1,28 @@
+import threading
+
 import redis
 import pika
-
+import json
 from BackEnd.bigChat import ChatConsumer
+
 
 redis_host = "localhost"
 redis_port = 6379
 redis_password = ""
 
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost'))
-channel = connection.channel()
-
-channel.queue_declare(queue='chatID')
-
-channel.basic_publish(exchange='', routing_key='hello', body='Hello World2!')
-
 
 class NameServer:
     def __init__(self):
+        self.nomChat = "chat_discovery"
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
         self.redis = redis.StrictRedis(host=redis_host, port=redis_port, password=redis_password, decode_responses=True)
         self.message_queue_key = 'petitions'
         self.message_queue_display_key = 'display'
         self.pubsub_channel_prefix = 'petition_channel:'
         self.pubsub_channel_display_prefix = 'display_channel:'
         self.exchange_names = []
-
     def register_user(self, username, ip_address, port):
         self.redis.hset('chat:{}'.format(username), 'ip', ip_address)
         self.redis.hset('chat:{}'.format(username), 'port', port)
@@ -46,7 +44,6 @@ class NameServer:
     def process_petitions(self):
         while True:
             petition = self.redis.lpop(self.message_queue_key)  # Use lpop
-            petitionDisplay = self.redis.lpop(self.message_queue_display_key)
             if petition:
                 # Split the petition into its components
                 parts = petition.split(':')
@@ -78,24 +75,28 @@ class NameServer:
                     petition, exchange_name = parts
                     if exchange_name not in self.exchange_names:
                         self.create_chat(exchange_name)
+
+                elif len(parts) == 1:
+                    body_data = json.dumps(self.exchange_names)  # Convert list to JSON string
+                    self.channel.basic_publish(exchange=self.nomChat, routing_key='chatID', body=body_data)
+
+                    print('Chats updated!')
+
                 else:
                     print("Invalid petition format:", petition)
-            if petitionDisplay:
-                channelDisplay = self.pubsub_channel_display_prefix
-                messages = self.exchange_names
-                # Publish the information to a channel associated with the sender's IP
-                if len(messages) > 0:
-                    self.redis.publish(channelDisplay, ":".join(messages))
-                    print('Published info')
-                else:
-                    self.redis.publish(channelDisplay, "no chats")
 
     # DEMANAR PETICIÓ
     def create_chat(self, exchange_name):
-        ChatConsumer(exchange_name)
+        chat = ChatConsumer(exchange_name)
         name_server.exchange_names.append(exchange_name)
 
     # crear xat
+    def connect_to_chat(self):
+        data = "connection:" + self.nomChat
+        self.redis.lpush(self.message_queue_key, data)
+        thread = threading.Thread(target=self.conf, args=(self.nomChat,))
+        thread.daemon = True
+        thread.start()
 
 
 if __name__ == "__main__":

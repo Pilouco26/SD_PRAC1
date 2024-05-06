@@ -1,15 +1,11 @@
 import socket
 import sys
-import threading
-import time
 import tkinter as tk
 from tkinter import simpledialog
 
 import pika
 
 from FrontEnd.Client import Client
-from FrontEnd.MessageDisplayer import MessageDisplayer
-from FrontEnd.MessageHandler import MessageHandler
 
 
 class ChatUI(tk.Tk):
@@ -24,6 +20,7 @@ class ChatUI(tk.Tk):
         self.label.pack(pady=10)
 
         self.options = {
+            "Subscribe chat:": self.chatSubscriber,
             "Connect chat": self.connectChatDisplayer,
             "Write in group connected": self.send_message_group,
             "Subscribe to group chat": self.subscribe_to_group_chat,
@@ -47,6 +44,13 @@ class ChatUI(tk.Tk):
 
     def connectChatDisplayer(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
+
+        if chat_id:
+            self.nomChat = chat_id
+            self.client.connect_to_chat(chat_id)
+
+    def chatSubscriber(self):
+        chat_id = simpledialog.askstring("Subscribe to Chat", "Enter chat ID:")
 
         if chat_id:
             self.nomChat = chat_id
@@ -127,13 +131,6 @@ def main():
     client = Client(username, ip_address, port)
     client.register(client)
     iu = ChatUI(client)
-
-    message_handler = MessageHandler(username, ip_address, port)
-    MessageDisplayer(message_handler)
-    # Start a new thread to execute start_message_handler while the Tkinter window is open
-    thread = threading.Thread(target=iu.client.start_message_handler)
-    thread.daemon = True  # Make the thread a daemon thread so it terminates when the main thread (Tkinter) exits
-    thread.start()
     iu.mainloop()
 
 

@@ -6,15 +6,16 @@ import redis
 
 def print_messages(messages):
     for i, message in enumerate(messages):
-        print(f"chat{i+1}: {message}")
+        print(f"chat{i + 1}: {message}")
 
 
 class Client:
 
     def __init__(self, username, ip_address, port):
+        self.init = False
         self.queue_name = None
-        self.channel = None
-        self.connection = None
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.connection.channel()
         self.username = username
         self.ip_address = ip_address
         self.port = port
@@ -47,6 +48,7 @@ class Client:
         result = self.channel.queue_declare(queue='', exclusive=True)
         self.queue_name = result.method.queue
         result = self.channel.queue_bind(exchange=self.nomChat, queue=self.queue_name, routing_key='chatID')
+        self.init = True
         return result
 
     def chat_discovery(self):
@@ -80,6 +82,7 @@ class Client:
         self.message_callback = callback
 
     def callback(self, ch, method, properties, body):
+        print("callback")
         message = body.decode()
         self.messages.append(message)  # Save the message
         print(message)
@@ -89,8 +92,16 @@ class Client:
             self.start_consuming()
 
     def start_consuming(self):
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
-        self.channel.start_consuming()
+        if self.channel.is_open and self.init is True:
+            self._consume_in_thread()
+
+
+    def _consume_in_thread(self):
+        try:
+            self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
+            self.channel.start_consuming()
+        except Exception as e:
+            print(f"Error in thread: {e}")
 
     def stop_consuming(self):
         self.channel.stop_consuming()
