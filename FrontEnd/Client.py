@@ -4,10 +4,6 @@ import pika
 import redis
 import ast
 
-def print_messages(messages):
-    for i, message in enumerate(messages):
-        print(f"chat{i + 1}: {message}")
-
 
 class Client:
 
@@ -46,7 +42,6 @@ class Client:
         self.nomChat = chat_id
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
-        # Nomes s'han de fer un cop!!!
         self.channel.exchange_declare(exchange=self.nomChat, exchange_type='direct')
         result = self.channel.queue_declare(queue='', exclusive=True)
         self.queue_name = result.method.queue
@@ -64,7 +59,6 @@ class Client:
 
     # Checks and calls Handler
     def configuration_chat(self, chat_id):
-
         result = self.conf(chat_id)
         # Check if binding was successful (result.response code should be 0)
         if result.method.NAME == 'Queue.BindOk':
@@ -86,7 +80,9 @@ class Client:
 
     def callback(self, ch, method, properties, body):
         message = body.decode()
-        self.messages[method.exchange] = message  # Save the message with exchange name as the key
+        if method.exchange not in self.messages:
+            self.messages[method.exchange] = []
+        self.messages[method.exchange].append(message)  # Save the message with exchange name as the key
         if method.exchange == self.nomChat:
             if method.exchange != "chat_discovery":
                 print(message)

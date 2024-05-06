@@ -51,11 +51,15 @@ class ChatUI(tk.Tk):
 
     def chat_connector(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
-
         if chat_id and chat_id in self.chatsSubscribed:
             print("Connected to Chat", chat_id)
             self.nomChat = chat_id
             self.client.connect_to_chat2(chat_id)
+            messages = self.client.messages
+            if chat_id in messages:
+                for message in messages[chat_id]:  # Iterate over the list of messages
+                    print(message)  # Print each message on a new line
+
         else:
             print("No chat found, we need you to be subscribed to", chat_id)
 
