@@ -3,7 +3,7 @@ import threading
 import redis
 import pika
 import json
-from BackEnd.bigChat import ChatConsumer
+from p1.BackEnd.bigChat import ChatConsumer
 
 
 redis_host = "localhost"
@@ -87,7 +87,7 @@ class NameServer:
 
     # DEMANAR PETICIÓ
     def create_chat(self, exchange_name):
-        chat = ChatConsumer(exchange_name)
+        ChatConsumer(exchange_name)
         name_server.exchange_names.append(exchange_name)
 
     # crear xat

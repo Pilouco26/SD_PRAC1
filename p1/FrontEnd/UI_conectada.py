@@ -5,7 +5,7 @@ from tkinter import simpledialog, messagebox
 
 import pika
 
-from FrontEnd.Client import Client
+from p1.FrontEnd.Client import Client
 
 
 class ChatUI(tk.Tk):

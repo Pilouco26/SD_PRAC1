@@ -7,12 +7,7 @@
     <list default="true" id="a40070f9-26cf-4ee3-a925-0290b922b2a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackEnd/bigChat.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/bigChat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackEnd/bigChatPersistent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/bigChatPersistent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackEnd/nameServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/nameServer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/Client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/MessageDisplayer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/MessageHandler.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/UI_conectada.py" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/UI_conectada.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,37 +39,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.UI conectada (1).executor": "Run",
-    "Python.UI conectada.executor": "Run",
-    "Python.UI_conectada (1).executor": "Run",
-    "Python.bigChat (1).executor": "Run",
-    "Python.bigChat.executor": "Run",
-    "Python.clientServer.executor": "Run",
-    "Python.helloRMQ2.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.nameServer (1).executor": "Debug",
-    "Python.nameServer.executor": "Run",
-    "Python.receiveRMQ (1).executor": "Run",
-    "Python.reciveRMQ (1).executor": "Run",
-    "Python.reciveRMQ.executor": "Run",
-    "Python.redisServer.executor": "Run",
-    "Python.serverGeneral.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "miguel",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/migue/PycharmProjects/sdpract/BackEnd",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "tools.buf",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.UI conectada (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.UI conectada.executor&quot;: &quot;Run&quot;,
+    &quot;Python.UI_conectada (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.bigChat (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.bigChat.executor&quot;: &quot;Run&quot;,
+    &quot;Python.clientServer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.helloRMQ2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.nameServer (1).executor&quot;: &quot;Debug&quot;,
+    &quot;Python.nameServer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.receiveRMQ (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.reciveRMQ (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.reciveRMQ.executor&quot;: &quot;Run&quot;,
+    &quot;Python.redisServer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.serverGeneral.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;miguel&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/migue/PycharmProjects/sdpract/BackEnd&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;tools.buf&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\migue\PycharmProjects\sdpract\BackEnd" />
@@ -302,6 +297,7 @@
       <workItem from="1714657062080" duration="4065000" />
       <workItem from="1714741373511" duration="6000" />
       <workItem from="1714991831846" duration="2557000" />
+      <workItem from="1715084838697" duration="1278000" />
     </task>
     <servers />
   </component>
@@ -358,7 +354,7 @@
     <SUITE FILE_PATH="coverage/sdpract$receiveRMQ__1_.coverage" NAME="receiveRMQ (1) Coverage Results" MODIFIED="1711546138963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sdpract$reciveRMQ.coverage" NAME="reciveRMQ Coverage Results" MODIFIED="1711382943436" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/auxiliars" />
     <SUITE FILE_PATH="coverage/sdpract$reciveRMQ__1_.coverage" NAME="reciveRMQ (1) Coverage Results" MODIFIED="1711396936391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/sdpract$UI_conectada__1_.coverage" NAME="UI_conectada (1) Coverage Results" MODIFIED="1714994293281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FrontEnd" />
+    <SUITE FILE_PATH="coverage/sdpract$UI_conectada__1_.coverage" NAME="UI_conectada (1) Coverage Results" MODIFIED="1715011938752" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FrontEnd" />
     <SUITE FILE_PATH="coverage/sdpract$bigChat__1_.coverage" NAME="bigChat (1) Coverage Results" MODIFIED="1714313468142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BackEnd" />
     <SUITE FILE_PATH="coverage/sdpract$serverGeneral.coverage" NAME="serverGeneral Coverage Results" MODIFIED="1711398833349" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
