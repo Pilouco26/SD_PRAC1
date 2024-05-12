@@ -11,6 +11,7 @@ class ChatClient:
         self.client_port = client_port
         self.client_id = client_id
         self.receiver_id = receiver_id
+        self.nomChat = ""
         self.channel = grpc.insecure_channel(f'{server_ip}:{server_port}')
         self.stub = xatPrivat_pb2_grpc.ChatServiceStub(self.channel)
         self.listen_thread = threading.Thread(target=self.listen_for_messages, daemon=True)
@@ -34,16 +35,9 @@ class ChatClient:
 
 def run_client(server_ip, server_port, client_port, client_id, receiver_id):
     client = ChatClient(server_ip, server_port, client_port, client_id, receiver_id)
-
-    def send_messages():
-        while True:
-            message = input("Enter your message (or type 'exit' to quit): ")
-            if message.lower() == 'exit':
-                break
-            client.send_message(message)
-
-    send_thread = threading.Thread(target=send_messages, daemon=True)
+    send_thread = threading.Thread(target=client.listen_for_messages, daemon=True)
     send_thread.start()
+
 
     while True:
         time.sleep(1)
