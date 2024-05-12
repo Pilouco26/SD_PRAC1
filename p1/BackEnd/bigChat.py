@@ -1,5 +1,4 @@
 import time
-
 import pika
 
 
@@ -21,7 +20,8 @@ class ChatConsumer:
             self.user_message_counts[user_id] = 0
             self.user_message_times[user_id] = time.time()
         if time.time() - self.user_message_times[user_id] < 60:  # Check if less than 60 seconds have passed
-            if self.user_message_counts[user_id] > 10:  # Check if the user has sent more than 10 messages in the last minute
+            if self.user_message_counts[user_id] > 10:  # Check if the user has sent more than 10 messages in the
+                # last minute
                 print("Spam detected from user", user_id)
                 return
             else:

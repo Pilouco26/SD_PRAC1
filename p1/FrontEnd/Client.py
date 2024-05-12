@@ -7,13 +7,15 @@ import ast
 
 class Client:
 
-    def __init__(self, username, ip_address, port):
+    def __init__(self, username, ip_address, port, server_ip, server_port):
         self.init = False
         self.queue_name = None
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
         self.username = username
         self.ip_address = ip_address
+        self.server_ip = server_ip
+        self.server_port = server_port
         self.port = port
         self.redis = redis.Redis(host='localhost', port=6379, db=0)
         self.message_queue_key = 'petitions'

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+service ChatService {
+  rpc Connect (ConnectionRequest) returns (ConnectionResponse) {}
+  rpc SendMessage (ChatMessage) returns (MessageAck) {}
+  rpc ReceiveMessage (ClientID) returns (ChatMessage) {}
+}
+
+message ConnectionRequest {
+  string client_id = 1;
+  string client_address = 2;
+}
+
+message ConnectionResponse {
+  string message = 1;
+}
+
+message ChatMessage {
+  string from_id = 1;
+  string to_id = 2;
+  string message = 3;
+}
+
+message MessageAck {
+  string message = 1;
+}
+
+message ClientID {
+  string client_id = 1;
+}
