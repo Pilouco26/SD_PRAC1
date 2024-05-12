@@ -35,6 +35,8 @@ class ChatUI(tk.Tk):
             "Write in group connected": self.send_message_group,
             "Discover chats": self.discover_chats,
             "Access insult channel": self.access_insult_channel,
+            "Connect chat": self.connect_to_chat_grpc,
+            "Send message": self.send_message
         }
 
         for option in self.options:
@@ -132,7 +134,7 @@ class ChatUI(tk.Tk):
             if receiver_username:
                 self.client.send_insult(insult_message, receiver_username)
 
-    def connect_to_chat(self):
+    def connect_to_chat_grpc(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
         if chat_id:
             # Conectarse al chat utilizando gRPC
@@ -204,8 +206,8 @@ def main():
         sys.exit()
 
     # Obtener detalles del servidor
-    server_ip = "localhost"
-    server_port = "50051"
+    server_ip = "192.168.56.1"
+    server_port = "59137"
 
     # Obtener detalles del cliente local
     ip_address, port = get_local_ip_and_port()

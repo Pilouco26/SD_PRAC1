@@ -1,3 +1,4 @@
+import socket
 import threading
 import grpc
 from concurrent import futures
@@ -53,10 +54,11 @@ class ChatServer(xatPrivat_pb2_grpc.ChatServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     xatPrivat_pb2_grpc.add_ChatServiceServicer_to_server(ChatServer(), server)
-    server.add_insecure_port('[::]:50051')
-    server.add_insecure_port('[::]:50052')
-    server.add_insecure_port('[::]:50053')
+    server.add_insecure_port('[::]:59137')
+    server.add_insecure_port('[::]:59138')
+    server.add_insecure_port('[::]:59139')
     server.start()
+    print("started")
     try:
         while True:
             time.sleep(86400)
