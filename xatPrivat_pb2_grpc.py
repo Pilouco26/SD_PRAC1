@@ -5,7 +5,7 @@ import grpc
 import xatPrivat_pb2 as xatPrivat__pb2
 
 
-class PrivateChatStub(object):
+class ChatServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,33 +15,23 @@ class PrivateChatStub(object):
             channel: A grpc.Channel.
         """
         self.Connect = channel.unary_unary(
-                '/PrivateChat/Connect',
-                request_serializer=xatPrivat__pb2.ConnectRequest.SerializeToString,
-                response_deserializer=xatPrivat__pb2.ConnectResponse.FromString,
+                '/ChatService/Connect',
+                request_serializer=xatPrivat__pb2.ConnectionRequest.SerializeToString,
+                response_deserializer=xatPrivat__pb2.ConnectionResponse.FromString,
                 )
         self.SendMessage = channel.unary_unary(
-                '/PrivateChat/SendMessage',
-                request_serializer=xatPrivat__pb2.Message.SerializeToString,
+                '/ChatService/SendMessage',
+                request_serializer=xatPrivat__pb2.ChatMessage.SerializeToString,
                 response_deserializer=xatPrivat__pb2.MessageAck.FromString,
                 )
-        self.ReceiveMessages = channel.unary_stream(
-                '/PrivateChat/ReceiveMessages',
-                request_serializer=xatPrivat__pb2.Empty.SerializeToString,
-                response_deserializer=xatPrivat__pb2.Message.FromString,
-                )
-        self.IsUserConnected = channel.unary_unary(
-                '/PrivateChat/IsUserConnected',
-                request_serializer=xatPrivat__pb2.ConnectRequest.SerializeToString,
-                response_deserializer=xatPrivat__pb2.ConnectResponse.FromString,
-                )
-        self.Disconnect = channel.unary_unary(
-                '/PrivateChat/Disconnect',
-                request_serializer=xatPrivat__pb2.ConnectRequest.SerializeToString,
-                response_deserializer=xatPrivat__pb2.ConnectResponse.FromString,
+        self.ReceiveMessage = channel.unary_unary(
+                '/ChatService/ReceiveMessage',
+                request_serializer=xatPrivat__pb2.ClientID.SerializeToString,
+                response_deserializer=xatPrivat__pb2.ChatMessage.FromString,
                 )
 
 
-class PrivateChatServicer(object):
+class ChatServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Connect(self, request, context):
@@ -56,60 +46,38 @@ class PrivateChatServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ReceiveMessages(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def IsUserConnected(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def Disconnect(self, request, context):
+    def ReceiveMessage(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_PrivateChatServicer_to_server(servicer, server):
+def add_ChatServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Connect': grpc.unary_unary_rpc_method_handler(
                     servicer.Connect,
-                    request_deserializer=xatPrivat__pb2.ConnectRequest.FromString,
-                    response_serializer=xatPrivat__pb2.ConnectResponse.SerializeToString,
+                    request_deserializer=xatPrivat__pb2.ConnectionRequest.FromString,
+                    response_serializer=xatPrivat__pb2.ConnectionResponse.SerializeToString,
             ),
             'SendMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.SendMessage,
-                    request_deserializer=xatPrivat__pb2.Message.FromString,
+                    request_deserializer=xatPrivat__pb2.ChatMessage.FromString,
                     response_serializer=xatPrivat__pb2.MessageAck.SerializeToString,
             ),
-            'ReceiveMessages': grpc.unary_stream_rpc_method_handler(
-                    servicer.ReceiveMessages,
-                    request_deserializer=xatPrivat__pb2.Empty.FromString,
-                    response_serializer=xatPrivat__pb2.Message.SerializeToString,
-            ),
-            'IsUserConnected': grpc.unary_unary_rpc_method_handler(
-                    servicer.IsUserConnected,
-                    request_deserializer=xatPrivat__pb2.ConnectRequest.FromString,
-                    response_serializer=xatPrivat__pb2.ConnectResponse.SerializeToString,
-            ),
-            'Disconnect': grpc.unary_unary_rpc_method_handler(
-                    servicer.Disconnect,
-                    request_deserializer=xatPrivat__pb2.ConnectRequest.FromString,
-                    response_serializer=xatPrivat__pb2.ConnectResponse.SerializeToString,
+            'ReceiveMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReceiveMessage,
+                    request_deserializer=xatPrivat__pb2.ClientID.FromString,
+                    response_serializer=xatPrivat__pb2.ChatMessage.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'PrivateChat', rpc_method_handlers)
+            'ChatService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class PrivateChat(object):
+class ChatService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -123,9 +91,9 @@ class PrivateChat(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/PrivateChat/Connect',
-            xatPrivat__pb2.ConnectRequest.SerializeToString,
-            xatPrivat__pb2.ConnectResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/ChatService/Connect',
+            xatPrivat__pb2.ConnectionRequest.SerializeToString,
+            xatPrivat__pb2.ConnectionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -140,14 +108,14 @@ class PrivateChat(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/PrivateChat/SendMessage',
-            xatPrivat__pb2.Message.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/ChatService/SendMessage',
+            xatPrivat__pb2.ChatMessage.SerializeToString,
             xatPrivat__pb2.MessageAck.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ReceiveMessages(request,
+    def ReceiveMessage(request,
             target,
             options=(),
             channel_credentials=None,
@@ -157,42 +125,8 @@ class PrivateChat(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/PrivateChat/ReceiveMessages',
-            xatPrivat__pb2.Empty.SerializeToString,
-            xatPrivat__pb2.Message.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def IsUserConnected(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/PrivateChat/IsUserConnected',
-            xatPrivat__pb2.ConnectRequest.SerializeToString,
-            xatPrivat__pb2.ConnectResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def Disconnect(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/PrivateChat/Disconnect',
-            xatPrivat__pb2.ConnectRequest.SerializeToString,
-            xatPrivat__pb2.ConnectResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/ChatService/ReceiveMessage',
+            xatPrivat__pb2.ClientID.SerializeToString,
+            xatPrivat__pb2.ChatMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

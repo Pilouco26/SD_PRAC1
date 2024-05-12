@@ -4,59 +4,56 @@ import xatPrivat_pb2
 import xatPrivat_pb2_grpc
 import threading
 
-class PrivateChatClient:
-    def __init__(self, username):
-        self.username = username
-        self.channel = grpc.insecure_channel('localhost:50051')
-        self.stub = xatPrivat_pb2_grpc.PrivateChatStub(self.channel)
-        self.connected = False
+class ChatClient:
+    def __init__(self, server_ip, server_port, client_port, client_id, receiver_id):
+        self.server_ip = server_ip
+        self.server_port = server_port
+        self.client_port = client_port
+        self.client_id = client_id
+        self.receiver_id = receiver_id
+        self.channel = grpc.insecure_channel(f'{server_ip}:{server_port}')
+        self.stub = xatPrivat_pb2_grpc.ChatServiceStub(self.channel)
+        self.listen_thread = threading.Thread(target=self.listen_for_messages, daemon=True)
+        self.listen_thread.start()
 
-    def connect(self):
-        # Conecta con el servidor
-        response = self.stub.Connect(xatPrivat_pb2.ConnectRequest(username=self.username))
-        if response.success:
-            print(f"Conectado como {self.username}")
-            self.connected = True
-        else:
-            print("Fallo en la conexión")
+    def send_message(self, message):
+        print(f"Sending message: {message}")
+        response = self.stub.SendMessage(xatPrivat_pb2.ChatMessage(from_id=self.client_id, to_id=self.receiver_id, message=message))
+        print(f"Message sent. Response: {response}")
 
-    def send_message(self, to, message):
-        # Envía un mensaje a otro usuario
-        response = self.stub.SendMessage(xatPrivat_pb2.Message(from_user=self.username, to=to, message=message))
-        if response.success:
-            print("Mensaje enviado con éxito")
-        else:
-            print("Fallo al enviar el mensaje")
+    def listen_for_messages(self):
+        while True:
+            try:
+                print("Listening for messages")
+                response = self.stub.ReceiveMessage(xatPrivat_pb2.ClientID(client_id=self.client_id))
+                print("Message received")
+                if response.message:  
+                    print(f"Message received from {response.from_id}: {response.message}")
+            except grpc.RpcError as e:
+                print(f"Error receiving message: {e}")
 
-    def receive_messages(self):
-        # Recibe mensajes del servidor
-        while self.connected:
-            for message in self.stub.ReceiveMessages(xatPrivat_pb2.Empty(username=self.username)):
-                print(f"Nuevo mensaje de {message.from_user}: {message.message}")
-    
-    def is_user_connected(self, username):
-        # Verifica si el usuario está conectado
-        response = self.stub.IsUserConnected(xatPrivat_pb2.ConnectRequest(username=username))
-        return response.success
-    
-    def disconnect(self):
-        # Desconecta del servidor
-        response = self.stub.Disconnect(xatPrivat_pb2.ConnectRequest(username=self.username))
-        if response.success:
-            print(f"Desconectado como {self.username}")
-            self.connected = False
-        else:
-            print("Fallo al desconectar")
+def run_client(server_ip, server_port, client_port, client_id, receiver_id):
+    client = ChatClient(server_ip, server_port, client_port, client_id, receiver_id)
 
-    
-def start_receiving_messages(client):
-    threading.Thread(target=client.receive_messages).start()
+    def send_messages():
+        while True:
+            message = input("Enter your message (or type 'exit' to quit): ")
+            if message.lower() == 'exit':
+                break
+            client.send_message(message)
 
-client1 = PrivateChatClient('Oriol')
-client1.connect()
-while not client1.is_user_connected('Miguel'):
-    print("Esperando a que Miguel se conecte...")
-    time.sleep(1)
-start_receiving_messages(client1)
-client1.send_message('Miguel', 'Hola Miguel')
-client1.send_message('Miguel', 'Com estas?')
+    send_thread = threading.Thread(target=send_messages, daemon=True)
+    send_thread.start()
+
+    while True:
+        time.sleep(1)
+
+
+if __name__ == '__main__':
+    server_ip = input("Enter the server IP address: ")
+    server_port = input("Enter the server port: ")
+    client_port = input("Enter this client's port: ")
+    client_id = input("Enter this client's ID: ")
+    receiver_id = input("Enter the receiver's ID: ")
+
+    run_client(server_ip, server_port, client_port, client_id, receiver_id)

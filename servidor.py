@@ -1,54 +1,62 @@
+import queue
+import threading
 import grpc
 from concurrent import futures
+import time
+
 import xatPrivat_pb2
 import xatPrivat_pb2_grpc
-import queue
 
-class PrivateChatServicer(xatPrivat_pb2_grpc.PrivateChatServicer):
+class ChatServer(xatPrivat_pb2_grpc.ChatServiceServicer):
+    connected_clients = {}
+    message_queue = {}
+
     def __init__(self):
-        self.clients = {}  # Almacena los clientes conectados
-        self.messages = {}  # Almacena los mensajes para cada cliente
+        self.connected_clients = {}
+        self.message_queue = {}
+        self.cv = threading.Condition()
 
     def Connect(self, request, context):
-        # Almacena el nombre de usuario y la cola de mensajes del cliente en los diccionarios
-        self.clients[request.username] = context
-        self.messages[request.username] = queue.Queue()
-        return xatPrivat_pb2.ConnectResponse(success=True)
+        print(f"Client {request.client_id} connected at {request.client_address}")
+        self.connected_clients[request.client_id] = context
+        self.message_queue[request.client_id] = []
+        print(f"Current connected clients: {self.connected_clients.keys()}")
+        return xatPrivat_pb2.ConnectionResponse(message="Connected")
 
     def SendMessage(self, request, context):
-        # Añade el mensaje a la cola de mensajes del destinatario si está conectado
-        if request.to in self.clients:
-            self.messages[request.to].put(xatPrivat_pb2.Message(from_user=request.from_user, message=request.message))
-            return xatPrivat_pb2.MessageAck(success=True)
-        else:
-            return xatPrivat_pb2.MessageAck(success=False)
+        print(f"Message from {request.from_id}: {request.message}")
+        with self.cv:
+            if request.to_id in self.connected_clients:
+                if request.to_id not in self.message_queue:
+                    self.message_queue[request.to_id] = []
+                self.message_queue[request.to_id].append(request)
+                print(f"Current message queue for {request.to_id}: {self.message_queue[request.to_id]}")
+                self.cv.notify_all()
+        return xatPrivat_pb2.MessageAck(message="Message received")
 
-    def ReceiveMessages(self, request, context):
-        # Produce mensajes a medida que se reciben
-        while True:
-            if not self.messages[request.username].empty():
-                yield self.messages[request.username].get()
 
-    def IsUserConnected(self, request, context):
-        # Verifica si el usuario está conectado
-        return xatPrivat_pb2.ConnectResponse(success=request.username in self.clients)
-    
-    def Disconnect(self, request, context):
-        # Elimina al usuario de los clientes conectados
-        if request.username in self.clients:
-            del self.clients[request.username]
-            del self.messages[request.username]
-            return xatPrivat_pb2.ConnectResponse(success=True)
-        else:
-            return xatPrivat_pb2.ConnectResponse(success=False)
+    def ReceiveMessage(self, request, context):
+        with self.cv:
+            while True:
+                print(f"Waiting for messages for client {request.client_id}")
+                if request.client_id in self.message_queue and self.message_queue[request.client_id]:
+                    message = self.message_queue[request.client_id].pop(0)
+                    return message
+                self.cv.wait()
 
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    xatPrivat_pb2_grpc.add_PrivateChatServicer_to_server(PrivateChatServicer(), server)
+    xatPrivat_pb2_grpc.add_ChatServiceServicer_to_server(ChatServer(), server)
     server.add_insecure_port('[::]:50051')
+    server.add_insecure_port('[::]:50052')
+    server.add_insecure_port('[::]:50053')
     server.start()
-    server.wait_for_termination()
+    try:
+        while True:
+            time.sleep(86400)
+    except KeyboardInterrupt:
+        server.stop(0)
 
 if __name__ == '__main__':
     serve()

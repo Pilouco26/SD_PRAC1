@@ -1,31 +1,30 @@
 syntax = "proto3";
 
-service PrivateChat {
-  rpc Connect (ConnectRequest) returns (ConnectResponse) {}
-  rpc SendMessage (Message) returns (MessageAck) {}
-  rpc ReceiveMessages (Empty) returns (stream Message) {}
-  rpc IsUserConnected(ConnectRequest) returns (ConnectResponse) {}
-  rpc Disconnect(ConnectRequest) returns (ConnectResponse) {}
+service ChatService {
+  rpc Connect (ConnectionRequest) returns (ConnectionResponse) {}
+  rpc SendMessage (ChatMessage) returns (MessageAck) {}
+  rpc ReceiveMessage (ClientID) returns (ChatMessage) {}
 }
 
-message ConnectRequest {
-  string username = 1;
+message ConnectionRequest {
+  string client_id = 1;
+  string client_address = 2;
 }
 
-message ConnectResponse {
-  bool success = 1;
+message ConnectionResponse {
+  string message = 1;
 }
 
-message Message {
-  string from_user = 1;
-  string to = 2;
+message ChatMessage {
+  string from_id = 1;
+  string to_id = 2;
   string message = 3;
 }
 
 message MessageAck {
-  bool success = 1;
+  string message = 1;
 }
 
-message Empty {
-  string username = 1;
+message ClientID {
+  string client_id = 1;
 }
