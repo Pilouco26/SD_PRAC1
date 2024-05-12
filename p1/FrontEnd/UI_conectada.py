@@ -4,8 +4,7 @@ from tkinter import simpledialog
 import socket
 import grpc
 
-import xatPrivat_pb2
-import xatPrivat_pb2_grpc
+from p1.BackEnd import xatPrivat_pb2
 
 
 class ChatUI(tk.Tk):
