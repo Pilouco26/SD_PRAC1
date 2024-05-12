@@ -1,7 +1,6 @@
 import time
 import grpc
-import xatPrivat_pb2
-import xatPrivat_pb2_grpc
+from p1.BackEnd import xatPrivat_pb2_grpc, xatPrivat_pb2
 import threading
 
 class ChatClient:
@@ -19,7 +18,8 @@ class ChatClient:
 
     def send_message(self, message):
         print(f"Sending message: {message}")
-        response = self.stub.SendMessage(xatPrivat_pb2.ChatMessage(from_id=self.client_id, to_id=self.receiver_id, message=message))
+        response = self.stub.SendMessage(
+            xatPrivat_pb2.ChatMessage(from_id=self.client_id, to_id=self.receiver_id, message=message))
         print(f"Message sent. Response: {response}")
 
     def listen_for_messages(self):
