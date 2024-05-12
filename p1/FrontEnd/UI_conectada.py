@@ -59,7 +59,7 @@ class ChatUI(tk.Tk):
 
     def chat_connector(self):
         chat_id = simpledialog.askstring("Connect to Chat", "Enter chat ID:")
-        if chat_id and chat_id in self.chatsSubscribed:
+        if chat_id and chat_id in self.chatsSubscribed and chat_id is not None:
             if chat_id == self.nomChat:
                 print("Already connected")
             else:
