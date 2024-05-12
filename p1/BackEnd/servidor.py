@@ -50,8 +50,18 @@ class ChatServer(xatPrivat_pb2_grpc.ChatServiceServicer):
                     return message
                 self.cv.wait()
 
-
+def get_local_ip_and_port():
+    # Fetch the local IP address of the machine
+    ip_address = socket.gethostbyname(socket.gethostname())
+    # Find an available port
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('localhost', 0))
+    port = s.getsockname()[1]
+    s.close()
+    return ip_address, port
 def serve():
+    ip, port = get_local_ip_and_port()
+    print(f"Serving on {ip}:{port}")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     xatPrivat_pb2_grpc.add_ChatServiceServicer_to_server(ChatServer(), server)
     server.add_insecure_port('[::]:59137')

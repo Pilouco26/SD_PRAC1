@@ -154,8 +154,6 @@ class ChatUI(tk.Tk):
                     Thread.start()
             except grpc.RpcError as e:
                 print(f"Error connecting to chat: {e}")
-
-    #FALLA AIXO
     def receive_messages(self):
         # Implementar recepción de mensajes utilizando gRPC
         try:
@@ -206,14 +204,14 @@ def main():
         sys.exit()
 
     # Obtener detalles del servidor
-    server_ip = "192.168.56.1"
+    server_ip = "localhost"
     server_port = "59137"
 
     # Obtener detalles del cliente local
     ip_address, port = get_local_ip_and_port()
 
     # Crear instancia del cliente
-    client = Client(username, server_ip, server_port, ip_address, port)
+    client = Client(username, ip_address, port,  server_ip, server_port)
     client.register(client)
     iu = ChatUI(client)
     iu.mainloop()
