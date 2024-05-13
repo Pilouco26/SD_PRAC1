@@ -21,10 +21,14 @@ class Master():
     def Connect(self, request, context):
         return 0
 
-    def Write(self, request, context):
+    def canCommit(self):
+
+        return False
+
+    def doCommit(self, request, context):
         return 0
 
-    def Read(self, request, context):
+    def doAbort(self, request, context):
         return 0
 
 
