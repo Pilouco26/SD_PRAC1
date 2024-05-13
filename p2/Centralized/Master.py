@@ -8,7 +8,7 @@ import xatPrivat_pb2
 import xatPrivat_pb2_grpc
 
 
-class Master():
+class Master:
     connected_clients = {}
     message_queue = {}
 
@@ -17,6 +17,24 @@ class Master():
         self.connected_clientsList = []
         self.message_queue = {}
         self.cv = threading.Condition()
+        self.nodes = []
+        self.node_id = "master"
+
+    def can_commit(self):
+        try:
+            message = "canCommit?"
+            # Crear un canal gRPC hacia el servidor
+            channel = grpc.insecure_channel(f'{self.server_ip}:{self.client.server_port}')
+            stub = xatPrivat_pb2_grpc.ChatServiceStub(channel)
+            unanimity = True
+            # Llamar al método Connect del servidor
+            for node in self.nodes and unanimity == True:
+                response = stub.SendMessage(
+                    xatPrivat_pb2.ChatMessage(from_id=self.node_id, to_id=node, message=message))
+                if response.message == 'No':
+                    unanimity = False
+        except grpc.RpcError as e:
+            print(f"Error connecting to chat: {e}")
 
     def Connect(self, request, context):
         return 0

@@ -1,8 +1,7 @@
-
 import sys
 import threading
 
-from tkinter import  messagebox
+from tkinter import messagebox
 
 import grpc
 import pika
@@ -154,6 +153,7 @@ class ChatUI(tk.Tk):
                     Thread.start()
             except grpc.RpcError as e:
                 print(f"Error connecting to chat: {e}")
+
     def receive_messages(self):
         # Implementar recepción de mensajes utilizando gRPC
         try:
@@ -211,7 +211,7 @@ def main():
     ip_address, port = get_local_ip_and_port()
 
     # Crear instancia del cliente
-    client = Client(username, ip_address, port,  server_ip, server_port)
+    client = Client(username, ip_address, port, server_ip, server_port)
     client.register(client)
     iu = ChatUI(client)
     iu.mainloop()
