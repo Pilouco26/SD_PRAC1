@@ -5,12 +5,15 @@ channel = connection.channel()
 
 channel.queue_declare(queue='insults')
 
-insults = ["Tonto", "Lleig", "Ruc", "Pocavergonya", "Desgraciat"]
+insults = input("Ingresa los insultos separados por coma: ").split(',')
+
 for insult in insults:
     channel.basic_publish(exchange='',
                           routing_key='insults',
-                          body=insult)
-    print("Insulto enviado:", insult)
+                          body=insult.strip())
+
+    print("Insulto enviado:", insult.strip())
 
 connection.close()
+
 
