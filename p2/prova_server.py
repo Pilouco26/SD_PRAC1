@@ -2,7 +2,7 @@ import time
 
 import grpc
 import store_pb2  # Replace with your actual package path
-from p2 import store_pb2_grpc
+import store_pb2_grpc
 
 
 def wait_for_server(channel, timeout=15):
@@ -33,6 +33,9 @@ def main():
 
     # Example usage: Put a key-value pair
     response = store_pb2.PutRequest(key="test_key", value="test_value")
+    print(f"Put response: {response}")
+    time.sleep(0.1)  # Simulate time delay between operations
+    response = store_pb2.GetRequest(key="test_key")
     print(f"Put response: {response}")
 
     # You can add more calls to your gRPC service methods here

@@ -1,3 +1,5 @@
+from concurrent.futures import ThreadPoolExecutor
+
 import grpc
 from concurrent import futures
 import time
@@ -37,16 +39,22 @@ import socket
 
 def serve_master(port):
     ip_address = "localhost"
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(ThreadPoolExecutor(max_workers=10))
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
     server.add_insecure_port(f'{ip_address}:{port}')
-    try:
-        server.start()
-        print(f"Server Master listening on {ip_address}:{port}")
-    except Exception as e:
-        print(f"Error starting server: {e}")
 
-    server.wait_for_termination()
+    def run_server():
+        try:
+            server.start()
+            print(f"Server Master listening on {ip_address}:{port}")
+        except Exception as e:
+            print(f"Error starting server: {e}")
+        finally:
+            server.wait_for_termination()
+
+    thread = threading.Thread(target=run_server)
+    thread.start()
+    return thread
 
 
 def serve_slave(port, master_stub):
@@ -54,13 +62,19 @@ def serve_slave(port, master_stub):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
     server.add_insecure_port(f'{ip_address}:{port}')
-    try:
-        server.start()
-        print(f"Server Slave listening on {ip_address}:{port}")
-    except Exception as e:
-        print(f"Error starting server: {e}")
 
-    server.wait_for_termination()
+    def run_server():
+        try:
+            server.start()
+            print(f"Server Master listening on {ip_address}:{port}")
+        except Exception as e:
+            print(f"Error starting server: {e}")
+        finally:
+            server.wait_for_termination()
+
+    thread = threading.Thread(target=run_server)
+    thread.start()
+    return thread
 
 
 if __name__ == '__main__':
