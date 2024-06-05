@@ -2,8 +2,6 @@ import grpc
 from concurrent import futures
 import time
 import threading
-import sys
-import os
 import yaml
 import store_pb2
 import store_pb2_grpc
@@ -34,18 +32,35 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         return store_pb2.RestoreResponse(success=True)
 
 
+import socket
+
+
 def serve_master(port):
+    ip_address = "localhost"
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
-    server.add_insecure_port(f'[::]:{port}')
-    server.start()
+    server.add_insecure_port(f'{ip_address}:{port}')
+    try:
+        server.start()
+        print(f"Server Master listening on {ip_address}:{port}")
+    except Exception as e:
+        print(f"Error starting server: {e}")
+
+    server.wait_for_termination()
 
 
 def serve_slave(port, master_stub):
+    ip_address = "localhost"
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
-    server.add_insecure_port(f'[::]:{port}')
-    server.start()
+    server.add_insecure_port(f'{ip_address}:{port}')
+    try:
+        server.start()
+        print(f"Server Slave listening on {ip_address}:{port}")
+    except Exception as e:
+        print(f"Error starting server: {e}")
+
+    server.wait_for_termination()
 
 
 if __name__ == '__main__':
@@ -53,5 +68,13 @@ if __name__ == '__main__':
         config = yaml.safe_load(file)
 
         serve_master(config['master']['port'])
-        # master_stub = grpc.insecure_channel(f"{config['master']['ip']}:{config['master']['port']}")
-        # serve_slave(config['slaves'][0]['port'], store_pb2_grpc.KeyValueStoreStub(master_stub))
+        master_stub = grpc.insecure_channel(f"{config['master']['ip']}:{config['master']['port']}")
+        for i in range(2):
+            serve_slave(config['slaves'][i]['port'], store_pb2_grpc.KeyValueStoreStub(master_stub))
+
+    # Once setup is done, keep servers active
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        pass  # Handles keyboard interrupt to exit gracefully
