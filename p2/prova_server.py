@@ -28,15 +28,16 @@ def connect_to_server(address, port):
 
 def main():
     address = "localhost"
-    port = 50051
+    port = 50053
     channel, stub = connect_to_server(address, port)
 
     # Example usage: Put a key-value pair
-    response = store_pb2.PutRequest(key="test_key", value="test_value")
+    response = stub.put(store_pb2.PutRequest(key="test_key", value="test_value"))
     print(f"Put response: {response}")
     time.sleep(0.1)  # Simulate time delay between operations
-    response = store_pb2.GetRequest(key="test_key")
-    print(f"Put response: {response}")
+    get_response = stub.get(store_pb2.GetRequest(key="test_key"))
+    print(f"Get response: {get_response}")  # This line retrieves the value
+
 
     # You can add more calls to your gRPC service methods here
 

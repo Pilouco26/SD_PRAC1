@@ -66,7 +66,7 @@ def serve_slave(port, master_stub):
     def run_server():
         try:
             server.start()
-            print(f"Server Master listening on {ip_address}:{port}")
+            print(f"\nServer slave listening on {ip_address}:{port}")
         except Exception as e:
             print(f"Error starting server: {e}")
         finally:
