@@ -9,6 +9,7 @@ import yaml
 import store_pb2
 import store_pb2_grpc
 
+
 class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
     def __init__(self):
         self.store = {}
@@ -33,12 +34,14 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
     def restore(self, request, context):
         return store_pb2.RestoreResponse(success=True)
 
+
 def serve(port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
     server.add_insecure_port(f'[::]:{port}')
     server.start()
     server.wait_for_termination()
+
 
 def quorum_put(stubs, key, value):
     successful_puts = 0
@@ -48,6 +51,7 @@ def quorum_put(stubs, key, value):
             successful_puts += 1
     return successful_puts >= len(stubs) // 2 + 1
 
+
 def quorum_get(stubs, key):
     responses = []
     for stub in stubs:
@@ -56,9 +60,10 @@ def quorum_get(stubs, key):
             responses.append(response.value)
     return max(set(responses), key=responses.count) if responses else None
 
+
 if __name__ == '__main__':
     with open('decentralized_config.yaml', 'r') as file:
         config = yaml.safe_load(file)
-    
+
     node_info = config['nodes'][int(sys.argv[1])]
     serve(node_info['port'])
