@@ -36,11 +36,22 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
 
 
 def serve(port):
+    ip_address = "localhost"
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
-    server.add_insecure_port(f'[::]:{port}')
-    server.start()
-    server.wait_for_termination()
+    server.add_insecure_port(f'{ip_address}:{port}')
+    def run_server():
+        try:
+            server.start()
+            print(f"Server listening on {ip_address}:{port}")
+        except Exception as e:
+            print(f"Error starting server: {e}")
+        finally:
+            server.wait_for_termination()
+
+    thread = threading.Thread(target=run_server)
+    thread.start()
+    return thread
 
 
 def quorum_put(stubs, key, value):
