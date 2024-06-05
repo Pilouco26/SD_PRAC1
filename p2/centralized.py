@@ -39,7 +39,6 @@ def serve_master(port):
     store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
     server.add_insecure_port(f'[::]:{port}')
     server.start()
-    server.wait_for_termination()
 
 
 def serve_slave(port, master_stub):
@@ -48,18 +47,11 @@ def serve_slave(port, master_stub):
     server.add_insecure_port(f'[::]:{port}')
     server.start()
 
-    def sync_with_master():
-        while True:
-            time.sleep(10)
-
-    threading.Thread(target=sync_with_master).start()
-    server.wait_for_termination()
-
 
 if __name__ == '__main__':
     with open('centralized_config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
         serve_master(config['master']['port'])
-        master_stub = grpc.insecure_channel(f"{config['master']['ip']}:{config['master']['port']}")
-        serve_slave(config['slaves'][0]['port'], store_pb2_grpc.KeyValueStoreStub(master_stub))
+        # master_stub = grpc.insecure_channel(f"{config['master']['ip']}:{config['master']['port']}")
+        # serve_slave(config['slaves'][0]['port'], store_pb2_grpc.KeyValueStoreStub(master_stub))

@@ -2,7 +2,7 @@ import subprocess
 
 def run_tests(test_script):
     try:
-        result = subprocess.run(["python3", test_script], capture_output=True, text=True)
+        result = subprocess.run(["python", test_script], capture_output=True, text=True)
         print(f"Logs for {test_script}:")
         print(result.stdout)
         if result.returncode != 0:

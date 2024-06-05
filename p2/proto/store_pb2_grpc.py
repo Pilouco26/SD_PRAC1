@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import p2.store_pb2 as store__pb2
+import store_pb2 as store__pb2
 
 
 class KeyValueStoreStub(object):
