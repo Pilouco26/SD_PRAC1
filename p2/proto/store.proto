@@ -1,16 +1,15 @@
 syntax = "proto3";
 
-package distributedstore;
-
 service KeyValueStore {
   rpc put(PutRequest) returns (PutResponse);
-
   rpc get(GetRequest) returns (GetResponse);
+  rpc slowDown(SlowDownRequest) returns (Empty);
+  rpc restore(Empty) returns (Empty);
 
-  rpc slowDown(SlowDownRequest) returns (SlowDownResponse);
-
-  rpc restore(RestoreRequest) returns (RestoreResponse);
-
+  // 2PC protocol methods
+  rpc canCommit(CanCommitRequest) returns (CanCommitResponse);
+  rpc doCommit(DoCommitRequest) returns (Empty);
+  rpc abort(AbortRequest) returns (Empty);
 }
 
 message PutRequest {
@@ -28,23 +27,28 @@ message GetRequest {
 
 message GetResponse {
   string value = 1;
-  bool found = 2;
 }
 
 message SlowDownRequest {
   int32 seconds = 1;
 }
 
-message SlowDownResponse {
-  bool success = 1;
+message Empty {}
+
+message CanCommitRequest {
+  string key = 1;
+  string value = 2;
 }
 
-message RestoreRequest {}
-
-message RestoreResponse {
-  bool success = 1;
+message CanCommitResponse {
+  bool canCommit = 1;
 }
 
-message Empty {
-    
+message DoCommitRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message AbortRequest {
+  string key = 1;
 }
