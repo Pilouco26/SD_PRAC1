@@ -1,5 +1,6 @@
+import logging
+import os
 from concurrent.futures import ThreadPoolExecutor
-
 import grpc
 from concurrent import futures
 import time
@@ -10,37 +11,84 @@ import store_pb2_grpc
 
 
 class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
-    def __init__(self):
-        self.store = {}
+    def __init__(self, role):
+        self.role = role
+        self.data = {}
+        self.slaves = []
         self.lock = threading.Lock()
+        self.canCommitX = True
 
     def put(self, request, context):
-        with self.lock:
-            self.store[request.key] = request.value
+        self.canCommitX = False
+        key, value = request.key, request.value
+        logging.debug(f"put() called with key={request.key} value={request.value}")
+        # Phase 1: Prepare
+        can_commit = True
+        for slave in self.slaves:
+            print("slave:", slave)
+            response = slave.canCommit(store_pb2.CanCommitRequest(key=key, value=value))
+            if not response.canCommit:
+                can_commit = False
+                break
+
+        if not can_commit:
+            for slave in self.slaves:
+                slave.abort(store_pb2.AbortRequest(key=key))
+            return store_pb2.PutResponse(success=False)
+
+        # Phase 2: Commit
+        for slave in self.slaves:
+            slave.doCommit(store_pb2.DoCommitRequest(key=key, value=value))
+            with self.lock:
+                self.data[key] = value
+                with open("backup.txt", "a") as f:  # Open in append mode
+                    f.write(f"{key}={value}\n")  # Write key-value pair with newline
+
+
+
+
+        self.canCommitX = True
         return store_pb2.PutResponse(success=True)
 
     def get(self, request, context):
+        self.canCommitX = False
+        logging.debug(f"get() called with key={request.key}")
+        key = request.key
         with self.lock:
-            value = self.store.get(request.key, None)
-        if value is None:
-            return store_pb2.GetResponse(found=False)
-        return store_pb2.GetResponse(value=value, found=True)
+            value = self.data.get(key, "")
+
+        self.canCommitX = True
+        return store_pb2.GetResponse(value=value)
 
     def slowDown(self, request, context):
-        time.sleep(request.seconds)
-        return store_pb2.SlowDownResponse(success=True)
+        pass
 
     def restore(self, request, context):
-        return store_pb2.RestoreResponse(success=True)
+        pass
 
+    def add_slave(self, slave_stub):
+        self.slaves.append(slave_stub)
 
-import socket
+    def canCommit(self, request, context):
+        return store_pb2.CanCommitResponse(canCommit=self.canCommitX)
 
+    def doCommit(self, request, context):
+        with self.lock:
+            self.data[request.key] = request.value
+        return store_pb2.Empty()
+
+    def abort(self, request, context):
+        return store_pb2.Empty()
 
 def serve_master(port):
     ip_address = "localhost"
     server = grpc.server(ThreadPoolExecutor(max_workers=10))
-    store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
+    kv_store_servicer = KeyValueStoreServicer("master")
+    with open("backup.txt", "r") as f:
+        for line in f:
+            key, value = line.strip().split("=", 1)  # Split by = sign, max split 1
+            kv_store_servicer.data[key] = value
+    store_pb2_grpc.add_KeyValueStoreServicer_to_server(kv_store_servicer, server)
     server.add_insecure_port(f'{ip_address}:{port}')
 
     def run_server():
@@ -54,13 +102,17 @@ def serve_master(port):
 
     thread = threading.Thread(target=run_server)
     thread.start()
-    return thread
-
+    return thread, kv_store_servicer
 
 def serve_slave(port, master_stub):
     ip_address = "localhost"
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
+    kv_store_servicer = KeyValueStoreServicer("slave")
+    with open("backup.txt", "r") as f:
+        for line in f:
+            key, value = line.strip().split("=", 1)  # Split by = sign, max split 1
+            kv_store_servicer.data[key] = value
+    store_pb2_grpc.add_KeyValueStoreServicer_to_server(kv_store_servicer, server)
     server.add_insecure_port(f'{ip_address}:{port}')
 
     def run_server():
@@ -74,18 +126,28 @@ def serve_slave(port, master_stub):
 
     thread = threading.Thread(target=run_server)
     thread.start()
-    return thread
 
+    return thread, store_pb2_grpc.KeyValueStoreStub(grpc.insecure_channel(f'{ip_address}:{port}'))
 
 if __name__ == '__main__':
+    # Remove backup.txt if it exists
+    if not os.path.exists("backup.txt"):
+        # Create an empty backup.txt file
+        with open("backup.txt", "w"):
+            pass
+
+
     with open('centralized_config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-        serve_master(config['master']['port'])
+        master_thread, master_servicer = serve_master(config['master']['port'])
         master_stub = grpc.insecure_channel(f"{config['master']['ip']}:{config['master']['port']}")
-        for i in range(2):
-            serve_slave(config['slaves'][i]['port'], store_pb2_grpc.KeyValueStoreStub(master_stub))
 
+        slave_threads = []
+        for i in range(2):
+            slave_thread, slave_stub = serve_slave(config['slaves'][i]['port'], store_pb2_grpc.KeyValueStoreStub(master_stub))
+            master_servicer.add_slave(slave_stub)
+            slave_threads.append(slave_thread)
     # Once setup is done, keep servers active
     try:
         while True:
