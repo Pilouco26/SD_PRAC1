@@ -33,7 +33,21 @@ message SlowDownRequest {
   int32 seconds = 1;
 }
 
-message Empty {}
+message SlowDownResponse {
+  bool success = 1;
+}
+
+message RestoreRequest {
+
+}
+
+message RestoreResponse {
+  bool success = 1;
+}
+
+message Empty {
+
+}
 
 message CanCommitRequest {
   string key = 1;
