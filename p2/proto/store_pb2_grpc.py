@@ -27,12 +27,12 @@ class KeyValueStoreStub(object):
         self.slowDown = channel.unary_unary(
                 '/KeyValueStore/slowDown',
                 request_serializer=store__pb2.SlowDownRequest.SerializeToString,
-                response_deserializer=store__pb2.Empty.FromString,
+                response_deserializer=store__pb2.SlowDownResponse.FromString,
                 )
         self.restore = channel.unary_unary(
                 '/KeyValueStore/restore',
                 request_serializer=store__pb2.Empty.SerializeToString,
-                response_deserializer=store__pb2.Empty.FromString,
+                response_deserializer=store__pb2.RestoreResponse.FromString,
                 )
         self.canCommit = channel.unary_unary(
                 '/KeyValueStore/canCommit',
@@ -113,12 +113,12 @@ def add_KeyValueStoreServicer_to_server(servicer, server):
             'slowDown': grpc.unary_unary_rpc_method_handler(
                     servicer.slowDown,
                     request_deserializer=store__pb2.SlowDownRequest.FromString,
-                    response_serializer=store__pb2.Empty.SerializeToString,
+                    response_serializer=store__pb2.SlowDownResponse.SerializeToString,
             ),
             'restore': grpc.unary_unary_rpc_method_handler(
                     servicer.restore,
                     request_deserializer=store__pb2.Empty.FromString,
-                    response_serializer=store__pb2.Empty.SerializeToString,
+                    response_serializer=store__pb2.RestoreResponse.SerializeToString,
             ),
             'canCommit': grpc.unary_unary_rpc_method_handler(
                     servicer.canCommit,
@@ -192,7 +192,7 @@ class KeyValueStore(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/KeyValueStore/slowDown',
             store__pb2.SlowDownRequest.SerializeToString,
-            store__pb2.Empty.FromString,
+            store__pb2.SlowDownResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -209,7 +209,7 @@ class KeyValueStore(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/KeyValueStore/restore',
             store__pb2.Empty.SerializeToString,
-            store__pb2.Empty.FromString,
+            store__pb2.RestoreResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

@@ -3,8 +3,8 @@ syntax = "proto3";
 service KeyValueStore {
   rpc put(PutRequest) returns (PutResponse);
   rpc get(GetRequest) returns (GetResponse);
-  rpc slowDown(SlowDownRequest) returns (Empty);
-  rpc restore(Empty) returns (Empty);
+  rpc slowDown(SlowDownRequest) returns (SlowDownResponse);
+  rpc restore(Empty) returns (RestoreResponse);
 
   // 2PC protocol methods
   rpc canCommit(CanCommitRequest) returns (CanCommitResponse);
