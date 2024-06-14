@@ -42,12 +42,12 @@ class KeyValueStoreStub(object):
         self.doCommit = channel.unary_unary(
                 '/KeyValueStore/doCommit',
                 request_serializer=store__pb2.DoCommitRequest.SerializeToString,
-                response_deserializer=store__pb2.Empty.FromString,
+                response_deserializer=store__pb2.DoCommitResponse.FromString,
                 )
         self.abort = channel.unary_unary(
                 '/KeyValueStore/abort',
                 request_serializer=store__pb2.AbortRequest.SerializeToString,
-                response_deserializer=store__pb2.Empty.FromString,
+                response_deserializer=store__pb2.AbortResponse.FromString,
                 )
 
 
@@ -128,12 +128,12 @@ def add_KeyValueStoreServicer_to_server(servicer, server):
             'doCommit': grpc.unary_unary_rpc_method_handler(
                     servicer.doCommit,
                     request_deserializer=store__pb2.DoCommitRequest.FromString,
-                    response_serializer=store__pb2.Empty.SerializeToString,
+                    response_serializer=store__pb2.DoCommitResponse.SerializeToString,
             ),
             'abort': grpc.unary_unary_rpc_method_handler(
                     servicer.abort,
                     request_deserializer=store__pb2.AbortRequest.FromString,
-                    response_serializer=store__pb2.Empty.SerializeToString,
+                    response_serializer=store__pb2.AbortResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -243,7 +243,7 @@ class KeyValueStore(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/KeyValueStore/doCommit',
             store__pb2.DoCommitRequest.SerializeToString,
-            store__pb2.Empty.FromString,
+            store__pb2.DoCommitResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -260,6 +260,6 @@ class KeyValueStore(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/KeyValueStore/abort',
             store__pb2.AbortRequest.SerializeToString,
-            store__pb2.Empty.FromString,
+            store__pb2.AbortResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

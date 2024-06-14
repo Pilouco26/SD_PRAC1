@@ -8,8 +8,8 @@ service KeyValueStore {
 
   // 2PC protocol methods
   rpc canCommit(CanCommitRequest) returns (CanCommitResponse);
-  rpc doCommit(DoCommitRequest) returns (Empty);
-  rpc abort(AbortRequest) returns (Empty);
+  rpc doCommit(DoCommitRequest) returns (DoCommitResponse);
+  rpc abort(AbortRequest) returns (AbortResponse);
 }
 
 message PutRequest {
@@ -23,6 +23,7 @@ message PutResponse {
 
 message GetRequest {
   string key = 1;
+  bool found = 2;
 }
 
 message GetResponse {
@@ -63,6 +64,14 @@ message DoCommitRequest {
   string value = 2;
 }
 
+message DoCommitResponse {
+  bool success = 1;
+}
+
 message AbortRequest {
   string key = 1;
+}
+
+message AbortResponse {
+  bool success = 1;
 }
