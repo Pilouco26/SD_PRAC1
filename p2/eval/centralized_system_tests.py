@@ -251,6 +251,7 @@ class TestCentralizedSystem(unittest.TestCase):
         
         start_time = time.time()
         process_count = 10
+
         operations_per_process = 20
 
         self.close_grpc_channel(self.channel_put)
