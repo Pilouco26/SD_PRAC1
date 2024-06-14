@@ -1,0 +1,11 @@
+master:
+  ip: "localhost"
+  port: 50051
+  address: "localhost:50051"
+slaves:
+  - ip: "localhost"
+    port: 50052
+    address: "localhost:50052"
+  - ip: "localhost"
+    port: 50053
+    address: "localhost:50053"
