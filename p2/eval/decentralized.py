@@ -49,9 +49,8 @@ def serve(port):
         finally:
             server.wait_for_termination()
 
-    thread = threading.Thread(target=run_server)
-    thread.start()
-    return thread
+    run_server()
+    return 0
 
 
 def quorum_put(stubs, key, value):
@@ -75,6 +74,14 @@ def quorum_get(stubs, key):
 if __name__ == '__main__':
     with open('decentralized_config.yaml', 'r') as file:
         config = yaml.safe_load(file)
+        threads = []
+        for i in range(3):
+            port = config['nodes'][i]['port']
+            thread = threading.Thread(target=serve, args=(port,))
+            threads.append(thread)
+            thread.start()
 
-    node_info = config['nodes'][int(sys.argv[1])]
-    serve(node_info['port'])
+        # Optionally join the threads if you want to wait for them to finish
+        for thread in threads:
+            thread.join()
+

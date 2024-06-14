@@ -23,11 +23,11 @@ message PutResponse {
 
 message GetRequest {
   string key = 1;
-  bool found = 2;
 }
 
 message GetResponse {
   string value = 1;
+  bool found = 2;
 }
 
 message SlowDownRequest {
