@@ -12,17 +12,19 @@ import store_pb2_grpc
 
 class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
     def __init__(self):
-        self.store = {}
+        self.data = {}
         self.lock = threading.Lock()
 
     def put(self, request, context):
         with self.lock:
-            self.store[request.key] = request.value
+            self.data[request.key] = request.value
+            with open("backup.txt", "a") as f:  # Open in append mode
+                f.write(f"{request.key}={request.value}\n")  # Write key-value pair with newline
         return store_pb2.PutResponse(success=True)
 
     def get(self, request, context):
         with self.lock:
-            value = self.store.get(request.key, None)
+            value = self.data.get(request.key, None)
         if value is None:
             return store_pb2.GetResponse(found=False)
         return store_pb2.GetResponse(value=value, found=True)
@@ -38,7 +40,12 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
 def serve(port):
     ip_address = "localhost"
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    store_pb2_grpc.add_KeyValueStoreServicer_to_server(KeyValueStoreServicer(), server)
+    kv_store_servicer = KeyValueStoreServicer()
+    with open("backup.txt", "r") as f:
+        for line in f:
+            key, value = line.strip().split("=", 1)  # Split by = sign, max split 1
+            kv_store_servicer.data[key] = value
+    store_pb2_grpc.add_KeyValueStoreServicer_to_server(kv_store_servicer, server)
     server.add_insecure_port(f'{ip_address}:{port}')
     def run_server():
         try:
@@ -72,6 +79,13 @@ def quorum_get(stubs, key):
 
 
 if __name__ == '__main__':
+
+    if not os.path.exists("backup.txt"):
+        # Create an empty backup.txt file
+        with open("backup.txt", "w"):
+            pass
+
+
     with open('decentralized_config.yaml', 'r') as file:
         config = yaml.safe_load(file)
         threads = []
