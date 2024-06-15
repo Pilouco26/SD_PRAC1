@@ -13,6 +13,7 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         self.data = {}
         self.lock = threading.Lock()
         self.sleep = False
+        self.commitIsPossible = True
 
     def put(self, request, context):
         while self.sleep:
@@ -24,10 +25,12 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
             return store_pb2.PutResponse(success=False)
 
     def get(self, request, context):
+        self.commitIsPossible = False
         while self.sleep:
             time.sleep(1)
         stubs = create_stubs(load_config())
         value = quorum_get(self, stubs, request.key, 2)
+        self.commitIsPossible = True
         if value is None:
             return store_pb2.GetResponse(found=False)
         return store_pb2.GetResponse(value=value, found=True)
@@ -43,7 +46,10 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         return store_pb2.RestoreResponse(success=True)
 
     def canCommit(self, request, context):
-        return store_pb2.CanCommitResponse(canCommit=True)
+        if self.commitIsPossible:
+            return store_pb2.CanCommitResponse(canCommit=True)
+        else:
+            return store_pb2.CanCommitResponse(canCommit=False)
 
     def doCommit(self, request, context):
         with self.lock:
@@ -81,17 +87,17 @@ def serve(port):
 
 def quorum_put(stubs, key, value, write_quorum_size):
     vote_count = 0
-    for stub, weight in stubs:
-        response = stub.canCommit(store_pb2.CanCommitRequest(key=key, value=value))
-        if response.canCommit:
-            vote_count += weight
-        if vote_count >= write_quorum_size:
-            for stub, weight in stubs:
-                stub.doCommit(store_pb2.DoCommitRequest(key=key, value=value))
-            return True
-    for stub, weight in stubs:
-        stub.abort(store_pb2.AbortRequest(key=key))
-    return False
+    while True:
+        for stub, weight in stubs:
+            response = stub.canCommit(store_pb2.CanCommitRequest(key=key, value=value))
+            if response.canCommit:
+                vote_count += weight
+            if vote_count >= write_quorum_size:
+                for stub, weight in stubs:
+                    stub.doCommit(store_pb2.DoCommitRequest(key=key, value=value))
+                return True
+        for stub, weight in stubs:
+            stub.abort(store_pb2.AbortRequest(key=key))
 
 
 def quorum_get(self, stubs, key, read_quorum_size):
