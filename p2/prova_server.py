@@ -27,15 +27,15 @@ def connect_to_server(address, port):
 
 
 def main():
-    address = "localhost"
-    port = 50051
+    address = "127.0.0.1"
+    port = 32770
     channel, stub = connect_to_server(address, port)
 
     # Example usage: Put a key-value pair
     response = stub.put(store_pb2.PutRequest(key="test_key", value="test_value"))
     print(f"Put response: {response}")
     time.sleep(0.1)  # Simulate time delay between operations
-    port = 50052
+    port = 32771
     channel, stub = connect_to_server(address, port)
     get_response = stub.get(store_pb2.GetRequest(key="test_key"))
     print(f"Get response: {get_response}")  # This line retrieves the value
