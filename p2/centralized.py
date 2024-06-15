@@ -22,11 +22,9 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
     def put(self, request, context):
         self.canCommitX = False
         key, value = request.key, request.value
-        logging.debug(f"put() called with key={request.key} value={request.value}")
         # Phase 1: Prepare
         can_commit = True
         for slave in self.slaves:
-            print("slave:", slave)
             response = slave.canCommit(store_pb2.CanCommitRequest(key=key, value=value))
             if not response.canCommit:
                 can_commit = False
@@ -53,7 +51,6 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
 
     def get(self, request, context):
         self.canCommitX = False
-        logging.debug(f"get() called with key={request.key}")
         key = request.key
         with self.lock:
             value = self.data.get(key, "")
@@ -64,8 +61,6 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
     def slowDown(self, request, context):
         def delayed_response():
             time.sleep(request.seconds)
-            # Your logic here
-            return store_pb2.SlowDownResponse(success=True)
 
         self.active_timer = threading.Timer(request.seconds, delayed_response)
         self.active_timer.start()
@@ -106,7 +101,6 @@ def serve_master(port):
     def run_server():
         try:
             server.start()
-            print(f"Server Master listening on {ip_address}:{port}")
         except Exception as e:
             print(f"Error starting server: {e}")
         finally:
@@ -130,7 +124,6 @@ def serve_slave(port, master_stub):
     def run_server():
         try:
             server.start()
-            print(f"\nServer slave listening on {ip_address}:{port}")
         except Exception as e:
             print(f"Error starting server: {e}")
         finally:
