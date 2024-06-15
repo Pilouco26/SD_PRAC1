@@ -17,6 +17,7 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         self.slaves = []
         self.lock = threading.Lock()
         self.canCommitX = True
+        self.active_timer = None
 
     def put(self, request, context):
         self.canCommitX = False
@@ -61,10 +62,21 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         return store_pb2.GetResponse(value=value)
 
     def slowDown(self, request, context):
-        pass
+        def delayed_response():
+            time.sleep(request.seconds)
+            # Your logic here
+            return store_pb2.SlowDownResponse(success=True)
+
+        self.active_timer = threading.Timer(request.seconds, delayed_response)
+        self.active_timer.start()
+        return store_pb2.SlowDownResponse(success=True)
 
     def restore(self, request, context):
-        pass
+        if self.active_timer:
+            self.active_timer.cancel()  # Stop the active timer
+            self.active_timer = None
+            # Your logic here
+        return store_pb2.RestoreResponse(success=True)
 
     def add_slave(self, slave_stub):
         self.slaves.append(slave_stub)
@@ -75,10 +87,10 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
     def doCommit(self, request, context):
         with self.lock:
             self.data[request.key] = request.value
-        return store_pb2.Empty()
+        return store_pb2.DoCommitResponse(success=True)
 
     def abort(self, request, context):
-        return store_pb2.Empty()
+        return store_pb2.AbortResponse(success=True)
 
 def serve_master(port):
     ip_address = "localhost"
