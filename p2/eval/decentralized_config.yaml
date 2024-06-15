@@ -6,5 +6,5 @@ nodes:
     port: 32771
     weight: 2
   - ip: "127.0.0.1"
-    port: 32123
+    port: 32772
     weight: 1

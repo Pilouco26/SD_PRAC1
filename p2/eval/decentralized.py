@@ -14,15 +14,15 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         self.lock = threading.Lock()
 
     def put(self, request, context):
-        with self.lock:
-            self.data[request.key] = request.value
-            with open("backup.txt", "a") as f:
-                f.write(f"{request.key}={request.value}\n")
-        return store_pb2.PutResponse(success=True)
+        stubs = create_stubs(load_config())
+        if quorum_put(stubs, request.key, request.value, 3):
+            return store_pb2.PutResponse(success=True)
+        else:
+            return store_pb2.PutResponse(success=False)
 
     def get(self, request, context):
-        with self.lock:
-            value = self.data.get(request.key, None)
+        stubs = create_stubs(load_config())
+        value = quorum_get(stubs, request.key, 2)
         if value is None:
             return store_pb2.GetResponse(found=False)
         return store_pb2.GetResponse(value=value, found=True)
@@ -71,15 +71,18 @@ def serve(port):
 
 
 def quorum_put(stubs, key, value, write_quorum_size):
-    total_weight = 0
+    vote_count = 0
     for stub, weight in stubs:
-        response = stub.put(store_pb2.PutRequest(key=key, value=value))
-        if response.success:
-            total_weight += weight
-        if total_weight >= write_quorum_size:
-            break
-    return total_weight >= write_quorum_size
-
+        response = stub.canCommit(store_pb2.CanCommitRequest(key=key, value=value))
+        if response.canCommit:
+            vote_count += weight
+        if vote_count >= write_quorum_size:
+            for stub, weight in stubs:
+                stub.doCommit(store_pb2.DoCommitRequest(key=key, value=value))
+            return True
+    for stub, weight in stubs:
+        stub.abort(store_pb2.AbortRequest(key=key))
+    return False
 
 def quorum_get(stubs, key, read_quorum_size):
     responses = []
@@ -93,6 +96,10 @@ def quorum_get(stubs, key, read_quorum_size):
             break
     return max(set(responses), key=responses.count) if responses else None
 
+def load_config():
+    with open('decentralized_config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
+    return config
 
 def create_stubs(config):
     stubs = []
@@ -102,19 +109,17 @@ def create_stubs(config):
         stubs.append((stub, node['weight']))
     return stubs
 
-
 if __name__ == '__main__':
     if not os.path.exists("backup.txt"):
         with open("backup.txt", "w"):
             pass
 
-    with open('decentralized_config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-        threads = []
-        for node in config['nodes']:
-            thread = threading.Thread(target=serve, args=(node['port'],))
-            threads.append(thread)
-            thread.start()
+    config = load_config()
+    threads = []
+    for node in config['nodes']:
+        thread = threading.Thread(target=serve, args=(node['port'],))
+        threads.append(thread)
+        thread.start()
 
-        for thread in threads:
-            thread.join()
+    for thread in threads:
+        thread.join()
