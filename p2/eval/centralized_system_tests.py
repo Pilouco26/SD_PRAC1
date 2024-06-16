@@ -19,12 +19,11 @@ from tabulate import tabulate
 
 
 def perform_operations(args):
-    
     operations_per_process = args[0]
     master_ip = args[1]
     master_port = args[2]
     slave_configs = args[3]
-    
+
     master_channel = grpc.insecure_channel(
         f"{master_ip}:{master_port}",
         options=[
@@ -34,38 +33,39 @@ def perform_operations(args):
             ("grpc.use_local_subchannel_pool", 1),
         ],
     )
-    
+
     master_stub = store_pb2_grpc.KeyValueStoreStub(master_channel)
-    slave_channels = [ ]
-    slave_stubs = [ ]
+    slave_channels = []
+    slave_stubs = []
     for slave_id, slave in enumerate(slave_configs):
         slave_ip = slave["ip"]
         slave_port = slave["port"]
         slave_channel = grpc.insecure_channel(
-                                        f"{slave_ip}:{slave_port}",
-                                        options=[
-                                            ("grpc.max_send_message_length", -1),
-                                            ("grpc.max_receive_message_length", -1),
-                                            ("grpc.so_reuseport", 1),
-                                            ("grpc.use_local_subchannel_pool", 1),
-                                        ],
-                                    )
+            f"{slave_ip}:{slave_port}",
+            options=[
+                ("grpc.max_send_message_length", -1),
+                ("grpc.max_receive_message_length", -1),
+                ("grpc.so_reuseport", 1),
+                ("grpc.use_local_subchannel_pool", 1),
+            ],
+        )
         slave_channels.append(slave_channel)
         slave_stubs.append(store_pb2_grpc.KeyValueStoreStub(slave_channel))
-    
+
     ops = 0
     for _ in range(operations_per_process):
-        
+
         try:
             master_stub.put(store_pb2.PutRequest(key="perf_key", value="perf_value"))
             ops += 1
             random.choice(slave_stubs).get(store_pb2.GetRequest(key="perf_key"))
             ops += 1
-            
+
         except Exception as e:
             print(e)
-    
+
     return ops
+
 
 class TestCentralizedSystem(unittest.TestCase):
     def setUp(self):
@@ -73,7 +73,8 @@ class TestCentralizedSystem(unittest.TestCase):
         self.logger = self.setup_logger()
         self.config = self.load_config()
         self.server_process = self.start_grpc_server()
-        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'], self.config['master']['port'])
+        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'],
+                                                                      self.config['master']['port'])
         self.channels_get, self.stubs_slaves = self.connect_to_grpc_servers(self.config['slaves'])
         self.stubs_get = self.stubs_slaves + [self.stub_put]
 
@@ -96,7 +97,7 @@ class TestCentralizedSystem(unittest.TestCase):
 
     def start_grpc_server(self):
         """Start the gRPC server as a subprocess."""
-        project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+        project_dir = os.path.abspath('C:\\Users\\migue\\PycharmProjects\\sdpract\\p2\\eval')
         server_script_path = os.path.join(project_dir, 'centralized.py')
         server_process = subprocess.Popen([sys.executable, server_script_path])
         time.sleep(2)
@@ -122,10 +123,9 @@ class TestCentralizedSystem(unittest.TestCase):
                 self.logger.error(f"The gRPC server ({channel_address}) is not available after the timeout.")
                 raise Exception(f"Failed to connect to the gRPC server ({channel_address}).")
             channels.append(channel)
-            stubs.append(store_pb2_grpc.KeyValueStoreStub(channel)) 
-        
+            stubs.append(store_pb2_grpc.KeyValueStoreStub(channel))
+
         return channels, stubs
-    
 
     def tearDown(self):
         """Tear down test fixtures by stopping the server and closing the channels."""
@@ -144,13 +144,13 @@ class TestCentralizedSystem(unittest.TestCase):
 
     def stop_grpc_server(self):
         """Stop the gRPC server process."""
-        
+
         try:
             os.kill(self.server_process.pid, signal.SIGTERM)
         except OSError:
             print("OS error")
             pass
-            
+
         self.server_process.wait()
 
     def wait_for_server(self, channel, timeout=15):
@@ -181,13 +181,15 @@ class TestCentralizedSystem(unittest.TestCase):
     def test_concurrent_access(self):
         """Test handling of concurrent put and get requests."""
         self.logger.info("Testing concurrent access...")
+
         def worker(key, value, index):
             try:
                 for _ in range(10):
                     self.stub_put.put(store_pb2.PutRequest(key=key, value=value))
                     time.sleep(0.1)  # Simulate time delay between operations
                     response = random.choice(self.stubs_get).get(store_pb2.GetRequest(key=key))
-                    self.assertEqual(response.value, f'value{index}', f"Unexpected value for key '{key}': expected 'value{index}' but got '{response.value}'")
+                    self.assertEqual(response.value, f'value{index}',
+                                     f"Unexpected value for key '{key}': expected 'value{index}' but got '{response.value}'")
             except Exception as e:
                 self.fail(f"Error occurred: {e}")
 
@@ -202,7 +204,8 @@ class TestCentralizedSystem(unittest.TestCase):
 
         for i in range(2):
             response = random.choice(self.stubs_get).get(store_pb2.GetRequest(key=f'key{i}'))
-            self.assertEqual(response.value, f'value{i}', f"Unexpected value for key 'key{i}': expected 'value{i}' but got '{response.value}'")
+            self.assertEqual(response.value, f'value{i}',
+                             f"Unexpected value for key 'key{i}': expected 'value{i}' but got '{response.value}'")
 
     def test_system_scalability_and_performance(self):
         """Test the system's scalability and performance by simulating high concurrent access."""
@@ -211,44 +214,44 @@ class TestCentralizedSystem(unittest.TestCase):
         start_time = time.time()
         process_count = 10
         operations_per_process = 20
-        
+
         self.close_grpc_channel(self.channel_put)
         self.close_grpc_channels(self.channels_get)
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            futures = [executor.submit(perform_operations, 
+            futures = [executor.submit(perform_operations,
                                        (
                                            operations_per_process,
-                                            self.config['master']['ip'],
-                                            self.config['master']['port'],
-                                            self.config['slaves']
+                                           self.config['master']['ip'],
+                                           self.config['master']['port'],
+                                           self.config['slaves']
                                        )
                                        )
-                                       for _ in range(process_count)]
-            
+                       for _ in range(process_count)]
+
             concurrent.futures.wait(futures)
 
         end_time = time.time()
         duration = end_time - start_time
-        print(f"Performed {sum([ f.result() for f in futures])} operations in {duration:.2f} seconds.")
-        
+        print(f"Performed {sum([f.result() for f in futures])} operations in {duration:.2f} seconds.")
+
         assert duration < 60, "The system took too long to perform the operations."
-        
+
     def test_system_scalability_and_performance_with_slowdown_slave(self):
 
         """Test the system's scalability and performance by simulating high concurrent access (with a partitioned slave)."""
         self.logger.info("Testing system scalability and performance with slowed slave...")
-        
-        
+
         self.channels_get, self.stubs_slaves = self.connect_to_grpc_servers(self.config['slaves'])
-        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'], self.config['master']['port'])
-        
+        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'],
+                                                                      self.config['master']['port'])
+
         slowdown_request = store_pb2.SlowDownRequest(seconds=1)
         stub_slave_id = random.choice(range(len(self.stubs_slaves)))
         stub_slave = self.stubs_slaves[stub_slave_id]
         slowdown_resp = stub_slave.slowDown(slowdown_request)
         assert slowdown_resp.success, "Failed to slow down slave."
-        
+
         start_time = time.time()
         process_count = 10
         operations_per_process = 20
@@ -257,22 +260,23 @@ class TestCentralizedSystem(unittest.TestCase):
         self.close_grpc_channels(self.channels_get)
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            futures = [executor.submit(perform_operations, 
+            futures = [executor.submit(perform_operations,
                                        (
                                            operations_per_process,
-                                            self.config['master']['ip'],
-                                            self.config['master']['port'],
-                                            self.config['slaves']
+                                           self.config['master']['ip'],
+                                           self.config['master']['port'],
+                                           self.config['slaves']
                                        )
                                        )
-                                       for _ in range(process_count)]
-            
+                       for _ in range(process_count)]
+
             concurrent.futures.wait(futures)
 
         end_time = time.time()
         duration = end_time - start_time
-        print(f"Performed {sum([f.result() for f in futures])} operations in {duration:.2f} seconds (slowing down master).")
-        
+        print(
+            f"Performed {sum([f.result() for f in futures])} operations in {duration:.2f} seconds (slowing down master).")
+
         # Restore
         self.channels_get, self.stubs_slaves = self.connect_to_grpc_servers(self.config['slaves'])
         restore_request = store_pb2.RestoreRequest()
@@ -280,21 +284,21 @@ class TestCentralizedSystem(unittest.TestCase):
         restore_resp = stub_slave.restore(restore_request)
         assert restore_resp.success, "Failed to restore slave."
 
-        assert duration < 600, "The system took too long to perform the operations."
-        
+        assert duration < 60, "The system took too long to perform the operations."
+
     def test_system_scalability_and_performance_with_slowdown_master(self):
 
         """Test the system's scalability and performance by simulating high concurrent access (with a partitioned master)."""
         self.logger.info("Testing system scalability and performance with slowed master...")
-        
-        
-        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'], self.config['master']['port'])
-        
-        # Slow down 
+
+        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'],
+                                                                      self.config['master']['port'])
+
+        # Slow down
         slowdown_request = store_pb2.SlowDownRequest(seconds=1)
         slowdown_resp = self.stub_put.slowDown(slowdown_request)
         assert slowdown_resp.success, "Failed to slow down master."
-        
+
         start_time = time.time()
         process_count = 10
         operations_per_process = 20
@@ -303,30 +307,32 @@ class TestCentralizedSystem(unittest.TestCase):
         self.close_grpc_channels(self.channels_get)
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            futures = [executor.submit(perform_operations, 
+            futures = [executor.submit(perform_operations,
                                        (
                                            operations_per_process,
-                                            self.config['master']['ip'],
-                                            self.config['master']['port'],
-                                            self.config['slaves']
+                                           self.config['master']['ip'],
+                                           self.config['master']['port'],
+                                           self.config['slaves']
                                        )
                                        )
-                                       for _ in range(process_count)]
-            
+                       for _ in range(process_count)]
+
             concurrent.futures.wait(futures)
 
         end_time = time.time()
         duration = end_time - start_time
-        print(f"Performed {process_count * operations_per_process * 2} operations in {duration:.2f} seconds (slowing down master).")
-        
+        print(
+            f"Performed {process_count * operations_per_process * 2} operations in {duration:.2f} seconds (slowing down master).")
+
         # Restore
-        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'], self.config['master']['port'])
+        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'],
+                                                                      self.config['master']['port'])
 
         restore_request = store_pb2.RestoreRequest()
         restore_resp = self.stub_put.restore(restore_request)
         assert restore_resp.success, "Failed to restore master."
 
-        assert duration < 600, "The system took too long to perform the operations."
+        assert duration < 60, "The system took too long to perform the operations."
 
     def test_state_recovery_after_critical_failure(self):
         """Test the system's ability to recover state after a critical failure."""
@@ -339,7 +345,8 @@ class TestCentralizedSystem(unittest.TestCase):
         time.sleep(5)
         self.server_process = self.start_grpc_server()
         time.sleep(5)
-        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'], self.config['master']['port'])
+        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'],
+                                                                      self.config['master']['port'])
         self.channels_get, self.stubs_get = self.connect_to_grpc_servers(self.config['slaves'])
         response = random.choice(self.stubs_get).get(store_pb2.GetRequest(key="stable_key"))
         self.assertEqual(response.value, "stable_value", "Data did not recover correctly after critical failure.")
@@ -349,14 +356,14 @@ class TestCentralizedSystem(unittest.TestCase):
 
         self.logger.info("Testing node failure during transaction...")
 
-        
         response = self.stub_put.put(store_pb2.PutRequest(key="initial_key", value="initial_value"))
         self.assertTrue(response.success, "Initial put failed unexpectedly.")
 
         self.stop_grpc_server()
         time.sleep(1)
         self.server_process = self.start_grpc_server()
-        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'], self.config['master']['port'])
+        self.channel_put, self.stub_put = self.connect_to_grpc_server(self.config['master']['ip'],
+                                                                      self.config['master']['port'])
         self.channels_get, self.stubs_get = self.connect_to_grpc_servers(self.config['slaves'])
 
         try:
@@ -378,10 +385,10 @@ if __name__ == '__main__':
         status = 'FAIL' if (case, reason) in results.failures else 'ERROR'
         row = [case.id().split('.')[-1], status, reason]
         table.append(row)
-    
+
     if results.testsRun:
         passed = results.testsRun - len(results.failures) - len(results.errors)
         table.append(["Total", "PASSED", f"{passed}/{results.testsRun}"])
-    
+
     print("\nCentralized Test Results Summary:")
     print(tabulate(table, headers=["Test Case", "Result", "Details"], tablefmt="pretty"))

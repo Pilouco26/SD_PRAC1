@@ -149,7 +149,7 @@ if __name__ == '__main__':
             pass
 
 
-    with open('centralized_config.yaml', 'r') as file:
+    with open('./centralized_config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
         master_thread, master_servicer = serve_master(config['master']['port'])
