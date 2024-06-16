@@ -25,12 +25,10 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
             return store_pb2.PutResponse(success=False)
 
     def get(self, request, context):
-        self.commitIsPossible = False
         while self.sleep:
             time.sleep(1)
         stubs = create_stubs(load_config())
         value = quorum_get(self, stubs, request.key, 2)
-        self.commitIsPossible = True
         if value is None:
             return store_pb2.GetResponse(found=False)
         return store_pb2.GetResponse(value=value, found=True)
@@ -52,8 +50,12 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
             return store_pb2.CanCommitResponse(canCommit=False)
 
     def doCommit(self, request, context):
+        self.commitIsPossible = False
         with self.lock:
             self.data[request.key] = request.value
+            with open("backup.txt", "a") as f:  # Open in append mode
+                f.write(f"{request.key}={request.value}\n")  # Write key-value pair with newline
+        self.commitIsPossible = True
         return store_pb2.DoCommitResponse(success=True)
 
     def abort(self, request, context):

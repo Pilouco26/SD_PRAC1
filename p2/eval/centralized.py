@@ -26,7 +26,6 @@ class KeyValueStoreServicer(store_pb2_grpc.KeyValueStoreServicer):
         # Phase 1: Prepare
         can_commit = True
         for slave in self.slaves:
-            print("slave:", slave)
             response = slave.canCommit(store_pb2.CanCommitRequest(key=key, value=value))
             if not response.canCommit:
                 can_commit = False
@@ -106,7 +105,6 @@ def serve_master(port):
     def run_server():
         try:
             server.start()
-            print(f"Server Master listening on {ip_address}:{port}")
         except Exception as e:
             print(f"Error starting server: {e}")
         finally:

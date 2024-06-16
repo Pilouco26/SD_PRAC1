@@ -15,8 +15,8 @@ def run_tests(test_script):
 
 
 def main():
-    centralized_success = run_tests("centralized_system_tests.py")
-    decentralized_success = run_tests("decentralized_system_tests.py")
+    centralized_success = run_tests("C:\\Users\\migue\\PycharmProjects\\sdpract\\p2\\eval\\centralized_system_tests.py")
+    decentralized_success = run_tests("C:\\Users\\migue\\PycharmProjects\\sdpract\\p2\\eval\\decentralized_system_tests.py")
 
     if centralized_success and decentralized_success:
         print("All tests passed successfully.")
