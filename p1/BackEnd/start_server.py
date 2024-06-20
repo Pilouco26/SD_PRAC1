@@ -16,6 +16,9 @@ def start_servers():
     name_server_process = subprocess.Popen([python_interpreter, 'nameServer.py'], env=os.environ)
     print(f"Started nameServer.py with PID: {name_server_process.pid}")
 
+    name_server_process = subprocess.Popen([python_interpreter, 'insults_client.py'], env=os.environ)
+    print(f"Started nameServer.py with PID: {name_server_process.pid}")
+
     # Wait for the processes to complete
     servidor_process.wait()
     name_server_process.wait()
